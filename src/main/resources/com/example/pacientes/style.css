@@ -1,0 +1,44 @@
+.login{
+    -fx-background-radius: 10;
+    -fx-background-color: #76b1ff;
+    -fx-padding: 0px 0px 0px 40px;
+    -fx-prompt-text-fill: #474848;
+}
+.login_botao{
+    -fx-background-radius: 10;
+    -fx-background-color: #76b1ff;
+}
+.login_botao:hover{
+    -fx-background-color: #046ffe;
+}
+.menu_lateral{
+    -fx-background-color: #046ffe;
+}
+.menu_botao{
+    -fx-background-color: transparent;
+}
+.menu_botao:hover{
+    -fx-background-color: #4f97f7;
+}
+.sair_botao{
+    -fx-background-color: transparent;
+}
+.sair_botao:hover{
+    -fx-background-color: #ff9c9c;
+}
+.mini_botao{
+    -fx-background-color: transparent;
+}
+.mini_botao:hover{
+    -fx-background-color: #9cdbff;
+}
+.menu_topo{
+    -fx-background-color: #c9dbf2;
+}
+.botao{
+    -fx-background-radius: 10;
+    -fx-background-color: #76b1ff;
+}
+.botao:hover{
+    -fx-background-color: #2d85fa;
+}

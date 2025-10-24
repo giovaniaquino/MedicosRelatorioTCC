@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.emojione.EmojiOneView?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import de.jensd.fx.glyphs.icons525.Icons525View?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="MainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="800.0" minWidth="1300.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pacientes.controller.HomeController">
+   <left>
+      <AnchorPane minWidth="-Infinity" prefHeight="600.0" prefWidth="239.0" styleClass="menu_lateral" stylesheets="@style.css" BorderPane.alignment="CENTER">
+         <children>
+            <Label layoutX="31.0" layoutY="69.0" text="HOSPITAL" textFill="WHITE">
+               <font>
+                  <Font name="Yu Gothic Bold" size="34.0" />
+               </font>
+            </Label>
+            <VBox layoutX="28.0" layoutY="235.0" spacing="15.0">
+               <children>
+                  <Button fx:id="BtMedico" graphicTextGap="10.0" mnemonicParsing="false" onAction="#TrocarPane" prefHeight="40.0" prefWidth="182.0" styleClass="menu_botao" stylesheets="@style.css" text="Medico" textFill="WHITE">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <font>
+                        <Font name="Yu Gothic Bold" size="19.0" />
+                     </font>
+                     <graphic>
+                        <Icons525View fill="WHITE" glyphName="MEDKIT" size="30" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="BtPaciente" graphicTextGap="10.0" mnemonicParsing="false" onAction="#TrocarPane" prefHeight="40.0" prefWidth="182.0" styleClass="menu_botao" stylesheets="@style.css" text="Paciente" textFill="WHITE">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <font>
+                        <Font name="Yu Gothic Bold" size="19.0" />
+                     </font>
+                     <graphic>
+                        <EmojiOneView fill="WHITE" glyphName="MASK" size="30" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="BtRelatorio" graphicTextGap="10.0" mnemonicParsing="false" onAction="#TrocarPane" prefHeight="40.0" prefWidth="182.0" styleClass="menu_botao" stylesheets="@style.css" text="Relatório" textFill="WHITE">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <font>
+                        <Font name="Yu Gothic Bold" size="19.0" />
+                     </font>
+                     <graphic>
+                        <EmojiOneView fill="WHITE" glyphName="CHART_WITH_UPWARDS_TREND" size="30" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="BtAddMedico" graphicTextGap="10.0" mnemonicParsing="false" onAction="#TrocarPane" prefHeight="89.0" prefWidth="182.0" styleClass="menu_botao" stylesheets="@style.css" text="Adicionar Medico" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <font>
+                        <Font name="Yu Gothic Bold" size="19.0" />
+                     </font>
+                     <graphic>
+                        <FontAwesomeIconView fill="WHITE" glyphName="USER_PLUS" size="30" />
+                     </graphic>
+                  </Button>
+               </children>
+            </VBox>
+         </children>
+         <cursor>
+            <Cursor fx:constant="DEFAULT" />
+         </cursor>
+      </AnchorPane>
+   </left>
+   <top>
+      <AnchorPane fx:id="pane_topo" prefWidth="1000.0" styleClass="menu_topo" stylesheets="@style.css" BorderPane.alignment="CENTER">
+         <children>
+            <HBox layoutX="1808.0" layoutY="1.0" spacing="10.0" AnchorPane.bottomAnchor="3.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="3.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#minimizar" prefWidth="50.0" styleClass="mini_botao" stylesheets="@style.css">
+                     <graphic>
+                        <FontAwesomeIconView glyphName="MINUS" />
+                     </graphic>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#sair" prefWidth="50.0" styleClass="sair_botao" stylesheets="@style.css">
+                     <graphic>
+                        <FontAwesomeIconView glyphName="CLOSE" />
+                     </graphic>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+               </children>
+            </HBox>
+         </children>
+      </AnchorPane>
+   </top>
+   <center>
+      <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="LbBemVindo" text="Bem Vindo">
+               <StackPane.margin>
+                  <Insets bottom="200.0" />
+               </StackPane.margin>
+               <font>
+                  <Font name="Yu Gothic UI Bold" size="50.0" />
+               </font>
+            </Label>
+            <AnchorPane fx:id="PanePaciente" prefHeight="200.0" prefWidth="200.0" visible="false">
+               <children>
+                  <Label layoutX="453.0" layoutY="91.0" text="Paciente">
+                     <font>
+                        <Font name="Yu Gothic Bold" size="36.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="141.0" layoutY="206.0" text="Nome: ">
+                     <font>
+                        <Font name="Yu Gothic Regular" size="27.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="141.0" layoutY="279.0" text="Idade: ">
+                     <font>
+                        <Font name="Yu Gothic Regular" size="27.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="299.0" layoutY="279.0" text="Sexo: ">
+                     <font>
+                        <Font name="Yu Gothic Regular" size="27.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="141.0" layoutY="339.0" text="CPF: ">
+                     <font>
+                        <Font name="Yu Gothic Regular" size="27.0" />
+                     </font>
+                  </Label>
+                  <TableView layoutX="530.0" layoutY="167.0" prefHeight="458.0">
+                    <columns>
+                      <TableColumn prefWidth="151.199951171875" text="Nome" />
+                      <TableColumn minWidth="0.0" prefWidth="62.4000244140625" text="Idade" />
+                        <TableColumn prefWidth="60.0" text="Sexo" />
+                        <TableColumn prefWidth="139.99998779296874" text="CPF" />
+                    </columns>
+                  </TableView>
+                  <TextField fx:id="TfPacienteNome" layoutX="231.0" layoutY="203.0" prefHeight="37.0" prefWidth="176.0">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </TextField>
+                  <ChoiceBox fx:id="CbPacienteSexo" layoutX="376.0" layoutY="283.0" prefHeight="26.0" prefWidth="61.0" />
+                  <TextField fx:id="TfPacienteCpf" layoutX="211.0" layoutY="335.0" prefHeight="37.0" prefWidth="176.0">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </TextField>
+                  <HBox fx:id="BtPacienteAtualizar" layoutX="141.0" layoutY="505.0" spacing="30.0">
+                     <children>
+                        <Button fx:id="BtPacienteCadastrar" mnemonicParsing="false" onAction="#CadastraPaciente" prefHeight="40.0" styleClass="botao" stylesheets="@style.css" text="Cadastrar">
+                           <font>
+                              <Font name="Yu Gothic Regular" size="12.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" prefHeight="40.0" styleClass="botao" stylesheets="@style.css" text="Atualizar">
+                           <font>
+                              <Font name="Yu Gothic Regular" size="12.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <TextField fx:id="TfPacienteIdade" layoutX="231.0" layoutY="276.0" prefHeight="40.0" prefWidth="60.0">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </TextField>
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="PaneRelatorio" prefHeight="200.0" prefWidth="200.0" visible="false">
+               <children>
+                  <Label layoutX="464.0" layoutY="54.0" text="Relatorio">
+                     <font>
+                        <Font name="Yu Gothic Bold" size="36.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="658.0" layoutY="111.0" text="Paciente:">
+                     <font>
+                        <Font name="Yu Gothic Regular" size="27.0" />
+                     </font>
+                  </Label>
+                  <ChoiceBox layoutX="785.0" layoutY="110.0" prefHeight="34.0" prefWidth="164.0" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="PaneAddMedico" prefHeight="200.0" prefWidth="200.0" visible="false">
+               <children>
+                  <Label layoutX="377.0" layoutY="96.0" text="Adicionar Medico">
+                     <font>
+                        <Font name="Yu Gothic Bold" size="36.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="148.0" layoutY="221.0" text="Nome:">
+                     <font>
+                        <Font name="Yu Gothic UI Regular" size="27.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="148.0" layoutY="295.0" text="Idade:">
+                     <font>
+                        <Font name="Yu Gothic UI Regular" size="27.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="149.0" layoutY="379.0" text="ID:">
+                     <font>
+                        <Font name="Yu Gothic UI Regular" size="27.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="148.0" layoutY="455.0" text="Senha:">
+                     <font>
+                        <Font name="Yu Gothic UI Regular" size="27.0" />
+                     </font>
+                  </Label>
+                  <TextField layoutX="242.0" layoutY="228.0" prefHeight="37.0" prefWidth="176.0" />
+                  <TextField layoutX="206.0" layoutY="380.0" prefHeight="37.0" prefWidth="176.0" />
+                  <PasswordField layoutX="242.0" layoutY="456.0" prefHeight="37.0" prefWidth="176.0" />
+                  <ChoiceBox layoutX="228.0" layoutY="300.0" prefHeight="33.0" prefWidth="62.0" />
+                  <TableView layoutX="683.0" layoutY="192.0" prefHeight="346.0" prefWidth="270.0">
+                    <columns>
+                      <TableColumn prefWidth="107.2000732421875" text="ID" />
+                      <TableColumn prefWidth="162.39990234375" text="Nome" />
+                    </columns>
+                  </TableView>
+                  <HBox layoutX="622.0" layoutY="608.0" spacing="30.0">
+                     <children>
+                        <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="80.0" styleClass="botao" stylesheets="@style.css" text="Cadastrar">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <font>
+                              <Font name="Yu Gothic Regular" size="12.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="80.0" styleClass="botao" stylesheets="@style.css" text="Atualizar">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <font>
+                              <Font name="Yu Gothic Regular" size="12.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="90.0" styleClass="botao" stylesheets="@style.css" text="Trocar Senha">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <font>
+                              <Font name="Yu Gothic Regular" size="12.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="PaneMedico" prefHeight="200.0" prefWidth="200.0" visible="false">
+               <children>
+                  <Label layoutX="457.0" layoutY="97.0" text="MEDICO">
+                     <font>
+                        <Font name="Yu Gothic Bold" size="36.0" />
+                     </font>
+                  </Label>
+                  <VBox layoutX="256.0" layoutY="245.0" spacing="50.0">
+                     <children>
+                        <Label fx:id="MedicoId" text="ID: ">
+                           <font>
+                              <Font name="Yu Gothic Regular" size="27.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="MedicoNome" text="Nome: ">
+                           <font>
+                              <Font name="Yu Gothic Regular" size="27.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="MedicoIdade" text="Idade: ">
+                           <font>
+                              <Font name="Yu Gothic Regular" size="27.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="MedicoQuantPaciente" text="Quantidade de Pacientes: ">
+                           <font>
+                              <Font name="Yu Gothic Regular" size="27.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
+         </children>
+      </StackPane>
+   </center>
+</BorderPane>
