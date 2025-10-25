@@ -11,6 +11,26 @@ import java.sql.SQLException;
 
 public class HomeDb {
 
+    public String ContaPacientes(HomeGetSet medico){
+        String sql = "SELECT COUNT(*) FROM paciente WHERE id_medico = ?";
+
+        try (Connection conn = new ConnectionDb().connect();
+        PreparedStatement pstm = conn.prepareStatement(sql)){
+
+            pstm.setInt(1, medico.getMedicoId());
+
+            try(ResultSet rs = pstm.executeQuery()){
+                if (rs.next()){
+                    return String.valueOf(rs.getInt("COUNT(*)"));
+                }
+            }
+
+        }catch (SQLException e){
+            System.err.println("Ocorreu um erro de Busca Quantidade Pacientes: " + e.getMessage());
+        }
+        return "0";
+    }
+
     public void CadastraPaciente(HomeGetSet paciente){
         String sql = "INSERT INTO paciente (Nome, Idade, Sexo, CPF, id_medico) VALUES (?,?,?,?,?)";
 

@@ -15,7 +15,7 @@ public class HomeController {
 
     @FXML BorderPane MainPane;
     @FXML AnchorPane PaneMedico, PanePaciente, PaneRelatorio, PaneAddMedico;
-    @FXML Label LbBemVindo, MedicoId, MedicoNome,MedicoIdade;
+    @FXML Label LbBemVindo, MedicoId, MedicoNome,MedicoIdade, MedicoQuantPaciente;
     @FXML Button BtMedico, BtPaciente, BtRelatorio, BtAddMedico;
     @FXML TextField TfPacienteNome, TfPacienteCpf, TfPacienteIdade;
     @FXML ChoiceBox<String> CbPacienteSexo;
@@ -32,9 +32,15 @@ public class HomeController {
     @FXML
     private void InfoMedico(){
         //Mostrar informacoes do medico que acessou o sistema
-        MedicoId.setText(MedicoId.getText()+LoginController.Id);
-        MedicoNome.setText(MedicoNome.getText()+LoginController.Usuario);
-        MedicoIdade.setText(MedicoIdade.getText()+LoginController.Idade);
+        MedicoId.setText("ID: "+LoginController.Id);
+        MedicoNome.setText("Nome: "+LoginController.Usuario);
+        MedicoIdade.setText("Idade: "+LoginController.Idade);
+
+        HomeGetSet medico = new HomeGetSet();
+        medico.setMedicoId(Integer.parseInt(LoginController.Id));
+
+        HomeDb busca = new HomeDb();
+        MedicoQuantPaciente.setText("Quantidade de Pacientes: "+ busca.ContaPacientes(medico));
     }
 
     @FXML
