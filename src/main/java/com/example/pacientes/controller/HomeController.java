@@ -2,12 +2,11 @@ package com.example.pacientes.controller;
 
 import com.example.pacientes.data_base.HomeDb;
 import com.example.pacientes.get_set.HomeGetSet;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -20,6 +19,9 @@ public class HomeController {
     @FXML Button BtMedico, BtPaciente, BtRelatorio, BtAddMedico;
     @FXML TextField TfPacienteNome, TfPacienteCpf, TfPacienteIdade;
     @FXML ChoiceBox<String> CbPacienteSexo;
+    @FXML TableView<HomeGetSet> TbPaciente;
+    @FXML TableColumn<HomeGetSet, String> ClPacienteNome, ClPacienteSexo, ClPacienteCpf;
+    @FXML TableColumn<HomeGetSet, Integer> ClPacienteIdade;
 
 
     @FXML
@@ -44,6 +46,7 @@ public class HomeController {
         paciente.setPacienteIdade(TfPacienteIdade.getText());
         paciente.setPacienteSexo(CbPacienteSexo.getValue());
         paciente.setPacienteCpf(TfPacienteCpf.getText());
+        paciente.setMedicoId(Integer.parseInt(LoginController.Id));
 
         //Faz conexao com classe HomeDb e chama funcao de cadastro
         HomeDb cadastro = new HomeDb();
@@ -55,6 +58,29 @@ public class HomeController {
         TfPacienteCpf.setText("");
         CbPacienteSexo.setValue(null);
 
+        //Atualiza tabela de pacientes
+        ListaPacientes();
+    }
+
+    @FXML
+    private void ListaPacientes() {
+        //adiciona a tabela os pacientes do medico
+        try {
+            HomeDb busca = new HomeDb();
+
+            HomeGetSet medico = new HomeGetSet();
+            medico.setMedicoId(Integer.parseInt(LoginController.Id));
+
+            ObservableList<HomeGetSet> lista = busca.ListaPacientes(medico);
+            ClPacienteNome.setCellValueFactory(new PropertyValueFactory<>("PacienteNome"));
+            ClPacienteIdade.setCellValueFactory(new PropertyValueFactory<>("PacienteIdade"));
+            ClPacienteSexo.setCellValueFactory(new PropertyValueFactory<>("PacienteSexo"));
+            ClPacienteCpf.setCellValueFactory(new PropertyValueFactory<>("PacienteCpf"));
+            TbPaciente.setItems(lista);
+
+        } catch (Exception e) {
+            System.err.println("Ocorreu um erro na Tabela Pacientes: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -76,6 +102,9 @@ public class HomeController {
             PanePaciente.setVisible(true);
             PaneRelatorio.setVisible(false);
             PaneAddMedico.setVisible(false);
+
+            //Atualiza tabela de pacientes
+            ListaPacientes();
 
         } else if (event.getSource() == BtRelatorio) {
             PaneMedico.setVisible(false);

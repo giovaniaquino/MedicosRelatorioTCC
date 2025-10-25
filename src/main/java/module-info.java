@@ -8,4 +8,5 @@ module com.example.pacientes {
     exports com.example.pacientes;
     exports com.example.pacientes.controller;
     opens com.example.pacientes.controller to javafx.fxml;
+    exports com.example.pacientes.get_set;
 }

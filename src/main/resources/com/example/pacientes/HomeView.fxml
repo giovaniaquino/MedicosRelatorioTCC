@@ -146,15 +146,20 @@
                         <Font name="Yu Gothic Regular" size="27.0" />
                      </font>
                   </Label>
-                  <TableView layoutX="530.0" layoutY="167.0" prefHeight="458.0">
+                  <TableView fx:id="TbPaciente" layoutX="530.0" layoutY="167.0" prefHeight="458.0" scaleShape="false">
                     <columns>
-                      <TableColumn prefWidth="151.199951171875" text="Nome" />
-                      <TableColumn minWidth="0.0" prefWidth="62.4000244140625" text="Idade" />
-                        <TableColumn prefWidth="60.0" text="Sexo" />
-                        <TableColumn prefWidth="139.99998779296874" text="CPF" />
+                      <TableColumn fx:id="ClPacienteNome" prefWidth="151.199951171875" resizable="false" text="Nome" />
+                      <TableColumn fx:id="ClPacienteIdade" minWidth="0.0" prefWidth="62.4000244140625" resizable="false" text="Idade" />
+                        <TableColumn fx:id="ClPacienteSexo" prefWidth="60.0" resizable="false" text="Sexo" />
+                        <TableColumn fx:id="ClPacienteCpf" prefWidth="139.99998779296874" resizable="false" text="CPF" />
                     </columns>
                   </TableView>
                   <TextField fx:id="TfPacienteNome" layoutX="231.0" layoutY="203.0" prefHeight="37.0" prefWidth="176.0">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </TextField>
+                  <TextField fx:id="TfPacienteIdade" layoutX="231.0" layoutY="276.0" prefHeight="40.0" prefWidth="60.0">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -179,11 +184,6 @@
                         </Button>
                      </children>
                   </HBox>
-                  <TextField fx:id="TfPacienteIdade" layoutX="231.0" layoutY="276.0" prefHeight="40.0" prefWidth="60.0">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                  </TextField>
                </children>
             </AnchorPane>
             <AnchorPane fx:id="PaneRelatorio" prefHeight="200.0" prefWidth="200.0" visible="false">
