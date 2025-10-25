@@ -96,4 +96,27 @@ public class HomeDb {
             System.err.println("Ocorreu um erro de SQL Cadastra Medico: " + e.getMessage());
         }
     }
+
+    public ObservableList<HomeGetSet> ListaMedicos(){
+        ObservableList<HomeGetSet> lista = FXCollections.observableArrayList();
+        String sql = "SELECT id_medico, user, idade FROM login";
+
+        try (Connection conn = new ConnectionDb().connect();
+             PreparedStatement pstm = conn.prepareStatement(sql);
+             ResultSet rs = pstm.executeQuery()){
+
+            while (rs.next()) {
+
+                HomeGetSet medico = new HomeGetSet();
+                medico.setMedicoId(rs.getInt("id_medico"));
+                medico.setMedicoNome(rs.getString("user"));
+                medico.setMedicoIdade(rs.getString("idade"));
+
+                lista.add(medico);
+            }
+        } catch (SQLException e) {
+            System.err.println("Ocorreu um erro de SQL Lista Pacientes: " + e.getMessage());
+        }
+        return lista;
+    }
 }

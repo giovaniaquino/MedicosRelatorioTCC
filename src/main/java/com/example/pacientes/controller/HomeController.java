@@ -23,9 +23,9 @@ public class HomeController {
     @FXML TextField TfPacienteNome, TfPacienteCpf, TfPacienteIdade, TfMedicoId, TfMedicoNome, TfMedicoIdade;
     @FXML PasswordField PfMedicoSenha;
     @FXML ChoiceBox<String> CbPacienteSexo;
-    @FXML TableView<HomeGetSet> TbPaciente;
-    @FXML TableColumn<HomeGetSet, String> ClPacienteNome, ClPacienteSexo, ClPacienteCpf;
-    @FXML TableColumn<HomeGetSet, Integer> ClPacienteIdade;
+    @FXML TableView<HomeGetSet> TbPaciente, TbMedico;
+    @FXML TableColumn<HomeGetSet, String> ClPacienteNome, ClPacienteSexo, ClPacienteCpf, ClMedicoNome;
+    @FXML TableColumn<HomeGetSet, Integer> ClPacienteIdade, ClMedicoId;
 
 
     @FXML
@@ -118,6 +118,24 @@ public class HomeController {
         TfMedicoIdade.setText("");
         PfMedicoSenha.setText("");
 
+        ListaMedico();
+
+    }
+
+    @FXML
+    private void ListaMedico() {
+        //adiciona a tabela os pacientes do medico
+        try {
+            HomeDb busca = new HomeDb();
+
+            ObservableList<HomeGetSet> lista = busca.ListaMedicos();
+            ClMedicoId.setCellValueFactory(new PropertyValueFactory<>("MedicoId"));
+            ClMedicoNome.setCellValueFactory(new PropertyValueFactory<>("MedicoNome"));
+            TbMedico.setItems(lista);
+
+        } catch (Exception e) {
+            System.err.println("Ocorreu um erro na Tabela Atendimentos: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -154,6 +172,8 @@ public class HomeController {
             PanePaciente.setVisible(false);
             PaneRelatorio.setVisible(false);
             PaneAddMedico.setVisible(true);
+
+            ListaMedico();
 
         } else {
             System.out.println("Erro na troca de telas");
