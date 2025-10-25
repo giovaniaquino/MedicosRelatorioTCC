@@ -1,5 +1,6 @@
 package com.example.pacientes.controller;
 
+import com.example.pacientes.Hash;
 import com.example.pacientes.data_base.HomeDb;
 import com.example.pacientes.get_set.HomeGetSet;
 import javafx.collections.ObservableList;
@@ -11,13 +12,16 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+import java.security.NoSuchAlgorithmException;
+
 public class HomeController {
 
     @FXML BorderPane MainPane;
     @FXML AnchorPane PaneMedico, PanePaciente, PaneRelatorio, PaneAddMedico;
     @FXML Label LbBemVindo, MedicoId, MedicoNome,MedicoIdade, MedicoQuantPaciente;
     @FXML Button BtMedico, BtPaciente, BtRelatorio, BtAddMedico;
-    @FXML TextField TfPacienteNome, TfPacienteCpf, TfPacienteIdade;
+    @FXML TextField TfPacienteNome, TfPacienteCpf, TfPacienteIdade, TfMedicoId, TfMedicoNome, TfMedicoIdade;
+    @FXML PasswordField PfMedicoSenha;
     @FXML ChoiceBox<String> CbPacienteSexo;
     @FXML TableView<HomeGetSet> TbPaciente;
     @FXML TableColumn<HomeGetSet, String> ClPacienteNome, ClPacienteSexo, ClPacienteCpf;
@@ -27,6 +31,11 @@ public class HomeController {
     @FXML
     private void initialize(){
         CbPacienteSexo.getItems().setAll("M","F");
+
+        //Esconder botao de cadastro de medico para usuarios nao administradores
+        if (LoginController.Nivel.equals("medico")){
+            BtAddMedico.setVisible(false);
+        }
     }
 
     @FXML
@@ -87,6 +96,28 @@ public class HomeController {
         } catch (Exception e) {
             System.err.println("Ocorreu um erro na Tabela Pacientes: " + e.getMessage());
         }
+    }
+
+    @FXML
+    private void CadastraMedico() throws NoSuchAlgorithmException {
+
+        //Passa valores para o get e set
+        HomeGetSet medico = new HomeGetSet();
+        medico.setMedicoId(Integer.parseInt(TfMedicoId.getText()));
+        medico.setMedicoNome(TfMedicoNome.getText());
+        medico.setMedicoIdade(TfMedicoIdade.getText());
+        medico.setMedicoSenha(Hash.Encriptar(PfMedicoSenha.getText()));
+
+        //Faz conexao com classe HomeDb e chama funcao de cadastro
+        HomeDb cadastro = new HomeDb();
+        cadastro.CadastraMedico(medico);
+
+        //Limpa campos após cadastro
+        TfMedicoId.setText("");
+        TfMedicoNome.setText("");
+        TfMedicoIdade.setText("");
+        PfMedicoSenha.setText("");
+
     }
 
     @FXML

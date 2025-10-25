@@ -45,8 +45,8 @@ public class HomeDb {
             pstm.setInt(5,paciente.getMedicoId());
             pstm.executeUpdate();
 
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            System.err.println("Ocorreu um erro de SQL Cadastra Paciente: " + e.getMessage());
         }
     }
 
@@ -77,5 +77,23 @@ public class HomeDb {
             System.err.println("Ocorreu um erro de SQL Lista Pacientes: " + e.getMessage());
         }
         return lista;
+    }
+
+    public void CadastraMedico(HomeGetSet medico){
+        String sql = "INSERT INTO login (id_medico, user, hash, idade, nivel) VALUES (?,?,?,?,1)";
+
+        try (Connection conn = new ConnectionDb().connect();
+             PreparedStatement pstm = conn.prepareStatement(sql)){
+
+            //Executa Query
+            pstm.setInt(1, medico.getMedicoId());
+            pstm.setString(2, medico.getMedicoNome());
+            pstm.setString(3, medico.getMedicoSenha());
+            pstm.setString(4, medico.getMedicoIdade());
+            pstm.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Ocorreu um erro de SQL Cadastra Medico: " + e.getMessage());
+        }
     }
 }

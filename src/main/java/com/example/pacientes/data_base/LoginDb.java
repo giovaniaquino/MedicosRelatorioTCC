@@ -10,7 +10,7 @@ import java.sql.SQLException;
 public class LoginDb {
 
     public LoginGetSet Acesso(LoginGetSet login){
-        String sql = "SELECT * FROM login WHERE user = ? AND senha = ?";
+        String sql = "SELECT * FROM login WHERE user = ? AND hash = ?";
 
         //Passa parametros para Query
         try (Connection conn = new ConnectionDb().connect();

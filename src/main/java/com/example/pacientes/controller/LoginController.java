@@ -1,6 +1,7 @@
 package com.example.pacientes.controller;
 
 
+import com.example.pacientes.Hash;
 import com.example.pacientes.data_base.LoginDb;
 import com.example.pacientes.get_set.LoginGetSet;
 import javafx.fxml.FXML;
@@ -15,6 +16,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.security.NoSuchAlgorithmException;
+
 public class LoginController {
     @FXML AnchorPane PaneLogin;
     @FXML TextField TfLogin;
@@ -23,12 +26,12 @@ public class LoginController {
     public static String Usuario, Id, Idade, Nivel;
 
     @FXML
-    public void Entrar(){
+    public void Entrar() throws NoSuchAlgorithmException {
 
         //Passa valores para o get e set
         LoginGetSet login = new LoginGetSet();
         login.setUsuario(TfLogin.getText());
-        login.setSenha(PfSenha.getText());
+        login.setSenha(Hash.Encriptar(PfSenha.getText()));
 
         //Faz conexao com classe login_db
         LoginDb entra = new LoginDb();

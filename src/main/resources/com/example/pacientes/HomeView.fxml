@@ -208,17 +208,17 @@
                         <Font name="Yu Gothic Bold" size="36.0" />
                      </font>
                   </Label>
-                  <Label layoutX="148.0" layoutY="221.0" text="Nome:">
+                  <Label layoutX="148.0" layoutY="308.0" text="Nome:">
                      <font>
                         <Font name="Yu Gothic UI Regular" size="27.0" />
                      </font>
                   </Label>
-                  <Label layoutX="148.0" layoutY="295.0" text="Idade:">
+                  <Label layoutX="148.0" layoutY="382.0" text="Idade:">
                      <font>
                         <Font name="Yu Gothic UI Regular" size="27.0" />
                      </font>
                   </Label>
-                  <Label layoutX="149.0" layoutY="379.0" text="ID:">
+                  <Label layoutX="148.0" layoutY="237.0" text="ID:">
                      <font>
                         <Font name="Yu Gothic UI Regular" size="27.0" />
                      </font>
@@ -228,19 +228,19 @@
                         <Font name="Yu Gothic UI Regular" size="27.0" />
                      </font>
                   </Label>
-                  <TextField layoutX="242.0" layoutY="228.0" prefHeight="37.0" prefWidth="176.0" />
-                  <TextField layoutX="206.0" layoutY="380.0" prefHeight="37.0" prefWidth="176.0" />
-                  <PasswordField layoutX="242.0" layoutY="456.0" prefHeight="37.0" prefWidth="176.0" />
-                  <ChoiceBox layoutX="228.0" layoutY="300.0" prefHeight="33.0" prefWidth="62.0" />
-                  <TableView layoutX="683.0" layoutY="192.0" prefHeight="346.0" prefWidth="270.0">
+                  <TextField fx:id="TfMedicoId" layoutX="205.0" layoutY="238.0" prefHeight="37.0" prefWidth="176.0" />
+                  <TextField fx:id="TfMedicoNome" layoutX="242.0" layoutY="315.0" prefHeight="37.0" prefWidth="176.0" />
+                  <TextField fx:id="TfMedicoIdade" layoutX="228.0" layoutY="383.0" prefHeight="38.0" prefWidth="49.0" />
+                  <PasswordField fx:id="PfMedicoSenha" layoutX="242.0" layoutY="456.0" prefHeight="37.0" prefWidth="176.0" />
+                  <TableView fx:id="TbMedico" layoutX="683.0" layoutY="192.0" prefHeight="346.0" prefWidth="270.0">
                     <columns>
-                      <TableColumn prefWidth="107.2000732421875" text="ID" />
-                      <TableColumn prefWidth="162.39990234375" text="Nome" />
+                      <TableColumn fx:id="ClMedicoId" prefWidth="107.2000732421875" text="ID" />
+                      <TableColumn fx:id="ClMedicoNome" prefWidth="162.39990234375" text="Nome" />
                     </columns>
                   </TableView>
                   <HBox layoutX="622.0" layoutY="608.0" spacing="30.0">
                      <children>
-                        <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="80.0" styleClass="botao" stylesheets="@style.css" text="Cadastrar">
+                        <Button mnemonicParsing="false" onAction="#CadastraMedico" prefHeight="45.0" prefWidth="80.0" styleClass="botao" stylesheets="@style.css" text="Cadastrar">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
