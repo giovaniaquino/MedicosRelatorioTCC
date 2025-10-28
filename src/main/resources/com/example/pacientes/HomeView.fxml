@@ -146,7 +146,7 @@
                         <Font name="Yu Gothic Regular" size="27.0" />
                      </font>
                   </Label>
-                  <TableView fx:id="TbPaciente" layoutX="530.0" layoutY="167.0" prefHeight="458.0" scaleShape="false">
+                  <TableView fx:id="TbPaciente" layoutX="530.0" layoutY="167.0" onMouseClicked="#CliqueMouse" prefHeight="458.0" scaleShape="false">
                     <columns>
                       <TableColumn fx:id="ClPacienteNome" prefWidth="151.199951171875" resizable="false" text="Nome" />
                       <TableColumn fx:id="ClPacienteIdade" minWidth="0.0" prefWidth="62.4000244140625" resizable="false" text="Idade" />
@@ -177,7 +177,7 @@
                               <Font name="Yu Gothic Regular" size="12.0" />
                            </font>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="40.0" styleClass="botao" stylesheets="@style.css" text="Atualizar">
+                        <Button mnemonicParsing="false" onAction="#AtualizaPaciente" prefHeight="40.0" styleClass="botao" stylesheets="@style.css" text="Atualizar">
                            <font>
                               <Font name="Yu Gothic Regular" size="12.0" />
                            </font>
@@ -208,44 +208,35 @@
                         <Font name="Yu Gothic Bold" size="36.0" />
                      </font>
                   </Label>
-                  <Label layoutX="148.0" layoutY="308.0" text="Nome:">
+                  <Label layoutX="149.0" layoutY="271.0" text="Nome:">
                      <font>
                         <Font name="Yu Gothic UI Regular" size="27.0" />
                      </font>
                   </Label>
-                  <Label layoutX="148.0" layoutY="382.0" text="Idade:">
+                  <Label layoutX="149.0" layoutY="345.0" text="Idade:">
                      <font>
                         <Font name="Yu Gothic UI Regular" size="27.0" />
                      </font>
                   </Label>
-                  <Label layoutX="148.0" layoutY="237.0" text="ID:">
+                  <Label layoutX="149.0" layoutY="418.0" text="Senha:">
                      <font>
                         <Font name="Yu Gothic UI Regular" size="27.0" />
                      </font>
                   </Label>
-                  <Label layoutX="148.0" layoutY="455.0" text="Senha:">
-                     <font>
-                        <Font name="Yu Gothic UI Regular" size="27.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="TfMedicoId" layoutX="205.0" layoutY="238.0" prefHeight="37.0" prefWidth="176.0">
+                  <TextField fx:id="TfMedicoNome" layoutX="243.0" layoutY="278.0" prefHeight="37.0" prefWidth="176.0">
                      <font>
                         <Font size="18.0" />
                      </font></TextField>
-                  <TextField fx:id="TfMedicoNome" layoutX="242.0" layoutY="315.0" prefHeight="37.0" prefWidth="176.0">
-                     <font>
-                        <Font size="18.0" />
-                     </font></TextField>
-                  <TextField fx:id="TfMedicoIdade" layoutX="228.0" layoutY="383.0" prefHeight="38.0" prefWidth="49.0">
+                  <TextField fx:id="TfMedicoIdade" layoutX="229.0" layoutY="346.0" prefHeight="38.0" prefWidth="49.0">
                      <font>
                         <Font size="18.0" />
                      </font>
                   </TextField>
-                  <PasswordField fx:id="PfMedicoSenha" layoutX="242.0" layoutY="456.0" prefHeight="37.0" prefWidth="176.0">
+                  <PasswordField fx:id="PfMedicoSenha" layoutX="243.0" layoutY="419.0" prefHeight="37.0" prefWidth="176.0">
                      <font>
                         <Font size="18.0" />
                      </font></PasswordField>
-                  <TableView fx:id="TbMedico" layoutX="683.0" layoutY="192.0" prefHeight="346.0" prefWidth="270.0">
+                  <TableView fx:id="TbMedico" layoutX="683.0" layoutY="192.0" onMouseClicked="#CliqueMouse" prefHeight="346.0" prefWidth="270.0">
                     <columns>
                       <TableColumn fx:id="ClMedicoId" prefWidth="107.2000732421875" text="ID" />
                       <TableColumn fx:id="ClMedicoNome" prefWidth="162.39990234375" text="Nome" />
@@ -261,7 +252,7 @@
                               <Font name="Yu Gothic Regular" size="12.0" />
                            </font>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="80.0" styleClass="botao" stylesheets="@style.css" text="Atualizar">
+                        <Button mnemonicParsing="false" onAction="#AtualizaMedico" prefHeight="45.0" prefWidth="80.0" styleClass="botao" stylesheets="@style.css" text="Atualizar">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>

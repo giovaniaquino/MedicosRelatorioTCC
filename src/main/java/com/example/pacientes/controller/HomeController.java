@@ -20,12 +20,13 @@ public class HomeController {
     @FXML AnchorPane PaneMedico, PanePaciente, PaneRelatorio, PaneAddMedico;
     @FXML Label LbBemVindo, MedicoId, MedicoNome,MedicoIdade, MedicoQuantPaciente;
     @FXML Button BtMedico, BtPaciente, BtRelatorio, BtAddMedico;
-    @FXML TextField TfPacienteNome, TfPacienteCpf, TfPacienteIdade, TfMedicoId, TfMedicoNome, TfMedicoIdade;
+    @FXML TextField TfPacienteNome, TfPacienteCpf, TfPacienteIdade, TfMedicoNome, TfMedicoIdade;
     @FXML PasswordField PfMedicoSenha;
     @FXML ChoiceBox<String> CbPacienteSexo;
     @FXML TableView<HomeGetSet> TbPaciente, TbMedico;
     @FXML TableColumn<HomeGetSet, String> ClPacienteNome, ClPacienteSexo, ClPacienteCpf, ClMedicoNome;
     @FXML TableColumn<HomeGetSet, Integer> ClPacienteIdade, ClMedicoId;
+    private int Id;
 
 
     @FXML
@@ -78,6 +79,23 @@ public class HomeController {
     }
 
     @FXML
+    private void AtualizaPaciente(){
+        //Passa valores para o get e set
+        HomeGetSet paciente = new HomeGetSet();
+        paciente.setPacienteId(Id);
+        paciente.setPacienteNome(TfPacienteNome.getText());
+        paciente.setPacienteIdade(TfPacienteIdade.getText());
+        paciente.setPacienteSexo(CbPacienteSexo.getValue());
+        paciente.setPacienteCpf(TfPacienteCpf.getText());
+
+        //Faz conexao com classe home_db
+        HomeDb atualiza = new HomeDb();
+        atualiza.AtualizaPaciente(paciente);
+
+        ListaPacientes();
+    }
+
+    @FXML
     private void ListaPacientes() {
         //adiciona a tabela os pacientes do medico
         try {
@@ -103,7 +121,6 @@ public class HomeController {
 
         //Passa valores para o get e set
         HomeGetSet medico = new HomeGetSet();
-        medico.setMedicoId(Integer.parseInt(TfMedicoId.getText()));
         medico.setMedicoNome(TfMedicoNome.getText());
         medico.setMedicoIdade(TfMedicoIdade.getText());
         medico.setMedicoSenha(Hash.Encriptar(PfMedicoSenha.getText()));
@@ -113,13 +130,27 @@ public class HomeController {
         cadastro.CadastraMedico(medico);
 
         //Limpa campos após cadastro
-        TfMedicoId.setText("");
         TfMedicoNome.setText("");
         TfMedicoIdade.setText("");
         PfMedicoSenha.setText("");
 
         ListaMedico();
 
+    }
+
+    @FXML
+    private void AtualizaMedico(){
+        //Passa valores para o get e set
+        HomeGetSet medico = new HomeGetSet();
+        medico.setMedicoId(Id);
+        medico.setMedicoNome(TfMedicoNome.getText());
+        medico.setMedicoIdade(TfMedicoIdade.getText());
+
+        //Faz conexao com classe home_db
+        HomeDb atualiza = new HomeDb();
+        atualiza.AtualizaMedico(medico);
+
+        ListaMedico();
     }
 
     @FXML
@@ -187,5 +218,35 @@ public class HomeController {
     public void minimizar(){
         Stage stage = (Stage) MainPane.getScene().getWindow();
         stage.setIconified(true);
+    }
+
+    @FXML
+    private void CliqueMouse(){
+        if (PanePaciente.isVisible()) {
+            try {
+                HomeGetSet selecao = TbPaciente.getSelectionModel().getSelectedItem();
+                TfPacienteNome.setText(selecao.getPacienteNome());
+                TfPacienteIdade.setText(selecao.getPacienteIdade());
+                TfPacienteCpf.setText(selecao.getPacienteCpf());
+                CbPacienteSexo.setValue(selecao.getPacienteSexo());
+
+                Id = selecao.getPacienteId();
+
+            } catch (Exception e) {
+                System.err.println("Ocorreu um erro Clique Mouse na tabela pacientes: " + e.getMessage());
+            }
+        }else if (PaneAddMedico.isVisible()){
+            try {
+
+                HomeGetSet selecao = TbMedico.getSelectionModel().getSelectedItem();
+                TfMedicoNome.setText(selecao.getMedicoNome());
+                TfMedicoIdade.setText(selecao.getMedicoIdade());
+
+                Id = selecao.getMedicoId();
+
+            } catch (Exception e) {
+                System.err.println("Ocorreu um erro Clique Mouse na tabela medico: " + e.getMessage());
+            }
+        }
     }
 }

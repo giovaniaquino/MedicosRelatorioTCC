@@ -50,9 +50,28 @@ public class HomeDb {
         }
     }
 
+    public void AtualizaPaciente(HomeGetSet paciente){
+        String sql = "UPDATE paciente SET Nome = ?, Idade = ?, Sexo = ?, CPF = ? where id_paciente = ?";
+
+        try (Connection conexao = new ConnectionDb().connect();
+             PreparedStatement pstm = conexao.prepareStatement(sql)){
+
+            //Executa Query
+            pstm.setString(1, paciente.getPacienteNome());
+            pstm.setString(2, paciente.getPacienteIdade());
+            pstm.setString(3, paciente.getPacienteSexo());
+            pstm.setString(4, paciente.getPacienteCpf());
+            pstm.setInt(5,paciente.getPacienteId());
+            pstm.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao atualizar paciente: "+e);
+        }
+    }
+
     public ObservableList<HomeGetSet> ListaPacientes(HomeGetSet medico){
         ObservableList<HomeGetSet> lista = FXCollections.observableArrayList();
-        String sql = "SELECT Nome, Idade, Sexo, CPF FROM paciente WHERE id_medico = ?";
+        String sql = "SELECT id_paciente, Nome, Idade, Sexo, CPF FROM paciente WHERE id_medico = ?";
 
         try (Connection conn = new ConnectionDb().connect();
              PreparedStatement pstm = conn.prepareStatement(sql)){
@@ -63,6 +82,8 @@ public class HomeDb {
                 while (rs.next()) {
 
                     HomeGetSet pacientes = new HomeGetSet();
+
+                    pacientes.setPacienteId(rs.getInt("id_paciente"));
                     pacientes.setPacienteNome(rs.getString("Nome"));
                     pacientes.setPacienteIdade(rs.getString("Idade"));
                     pacientes.setPacienteSexo(rs.getString("Sexo"));
@@ -80,20 +101,36 @@ public class HomeDb {
     }
 
     public void CadastraMedico(HomeGetSet medico){
-        String sql = "INSERT INTO login (id_medico, user, hash, idade, nivel) VALUES (?,?,?,?,1)";
+        String sql = "INSERT INTO login (user, hash, idade, nivel) VALUES (?,?,?,1)";
 
         try (Connection conn = new ConnectionDb().connect();
              PreparedStatement pstm = conn.prepareStatement(sql)){
 
             //Executa Query
-            pstm.setInt(1, medico.getMedicoId());
-            pstm.setString(2, medico.getMedicoNome());
-            pstm.setString(3, medico.getMedicoSenha());
-            pstm.setString(4, medico.getMedicoIdade());
+            pstm.setString(1, medico.getMedicoNome());
+            pstm.setString(2, medico.getMedicoSenha());
+            pstm.setString(3, medico.getMedicoIdade());
             pstm.executeUpdate();
 
         } catch (SQLException e) {
             System.err.println("Ocorreu um erro de SQL Cadastra Medico: " + e.getMessage());
+        }
+    }
+
+    public void AtualizaMedico(HomeGetSet medico){
+        String sql = "UPDATE login SET user = ?, idade = ? where id_medico = ?";
+
+        try (Connection conexao = new ConnectionDb().connect();
+             PreparedStatement pstm = conexao.prepareStatement(sql)){
+
+            //Executa Query
+            pstm.setString(1, medico.getMedicoNome());
+            pstm.setString(2, medico.getMedicoIdade());
+            pstm.setInt(3,medico.getMedicoId());
+            pstm.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao atualizar medico: "+e);
         }
     }
 

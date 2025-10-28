@@ -2,7 +2,7 @@ package com.example.pacientes.get_set;
 
 public class HomeGetSet {
     private String PacienteNome, PacienteCpf, PacienteIdade, PacienteSexo, MedicoNome, MedicoIdade, MedicoSenha;
-    private int MedicoId;
+    private int MedicoId, PacienteId;
 
     public String getPacienteNome() {
         return PacienteNome;
@@ -66,5 +66,13 @@ public class HomeGetSet {
 
     public void setMedicoSenha(String medicoSenha) {
         MedicoSenha = medicoSenha;
+    }
+
+    public int getPacienteId() {
+        return PacienteId;
+    }
+
+    public void setPacienteId(int pacienteId) {
+        PacienteId = pacienteId;
     }
 }
