@@ -18,7 +18,7 @@ public class HomeController {
 
     @FXML BorderPane MainPane;
     @FXML AnchorPane PaneMedico, PanePaciente, PaneRelatorio, PaneAddMedico;
-    @FXML Label LbBemVindo, MedicoId, MedicoNome,MedicoIdade, MedicoQuantPaciente, LbMedicoSenha, LbMedicoNovaSenha, LbMedicoConfSenha;
+    @FXML Label LbBemVindo, MedicoId, MedicoNome,MedicoIdade, MedicoQuantPaciente, LbMedicoSenha, LbMedicoNovaSenha, LbMedicoConfSenha, LbMedicoErro;
     @FXML Button BtMedico, BtPaciente, BtRelatorio, BtAddMedico, BtMedicoConfirma;
     @FXML TextField TfPacienteNome, TfPacienteCpf, TfPacienteIdade, TfMedicoNome, TfMedicoIdade;
     @FXML PasswordField PfMedicoSenha, PfMedicoNovaSenha, PfMedicoConfSenha;
@@ -170,8 +170,21 @@ public class HomeController {
     }
 
     @FXML
-    private void MudaSenha(){
+    private void MudaSenha() throws NoSuchAlgorithmException {
+        if (PfMedicoNovaSenha.getText().equals(PfMedicoConfSenha.getText())) {
+            HomeGetSet medico = new HomeGetSet();
+            medico.setMedicoId(Id);
+            medico.setMedicoSenha(Hash.Encriptar(PfMedicoConfSenha.getText()));
 
+            //Faz conexao com classe home_db
+            HomeDb atualiza = new HomeDb();
+            atualiza.TrocaSenha(medico);
+
+            LbMedicoErro.setVisible(false);
+            ListaMedico();
+        }else{
+            LbMedicoErro.setVisible(true);
+        }
     }
 
     @FXML

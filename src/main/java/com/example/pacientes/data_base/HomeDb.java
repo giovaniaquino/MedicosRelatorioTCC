@@ -134,6 +134,22 @@ public class HomeDb {
         }
     }
 
+    public void TrocaSenha(HomeGetSet medico){
+        String sql = "UPDATE login SET hash = ? where id_medico = ?";
+
+        try (Connection conexao = new ConnectionDb().connect();
+             PreparedStatement pstm = conexao.prepareStatement(sql)){
+
+            //Executa Query
+            pstm.setString(1, medico.getMedicoSenha());
+            pstm.setInt(2,medico.getMedicoId());
+            pstm.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao Trocar Senha: "+e);
+        }
+    }
+
     public ObservableList<HomeGetSet> ListaMedicos(){
         ObservableList<HomeGetSet> lista = FXCollections.observableArrayList();
         String sql = "SELECT id_medico, user, idade FROM login";
