@@ -92,6 +92,12 @@ public class HomeController {
         HomeDb atualiza = new HomeDb();
         atualiza.AtualizaPaciente(paciente);
 
+        //Limpa campos após cadastro
+        TfPacienteNome.setText("");
+        TfPacienteIdade.setText("");
+        TfPacienteCpf.setText("");
+        CbPacienteSexo.setValue(null);
+
         ListaPacientes();
     }
 
@@ -150,6 +156,10 @@ public class HomeController {
         HomeDb atualiza = new HomeDb();
         atualiza.AtualizaMedico(medico);
 
+        //Limpa campos após cadastro
+        TfMedicoNome.setText("");
+        TfMedicoIdade.setText("");
+
         ListaMedico();
     }
 
@@ -181,6 +191,21 @@ public class HomeController {
             atualiza.TrocaSenha(medico);
 
             LbMedicoErro.setVisible(false);
+
+            //Limpa campos após cadastro
+            TfMedicoNome.setText("");
+            TfMedicoIdade.setText("");
+            PfMedicoSenha.setText("");
+            PfMedicoConfSenha.setText("");
+            PfMedicoNovaSenha.setText("");
+
+            //Esconde campos de alterar senha
+            LbMedicoNovaSenha.setVisible(false);
+            PfMedicoNovaSenha.setVisible(false);
+            LbMedicoConfSenha.setVisible(false);
+            PfMedicoConfSenha.setVisible(false);
+            BtMedicoConfirma.setVisible(false);
+
             ListaMedico();
         }else{
             LbMedicoErro.setVisible(true);
