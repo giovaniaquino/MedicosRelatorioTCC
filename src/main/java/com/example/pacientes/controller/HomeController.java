@@ -18,10 +18,10 @@ public class HomeController {
 
     @FXML BorderPane MainPane;
     @FXML AnchorPane PaneMedico, PanePaciente, PaneRelatorio, PaneAddMedico;
-    @FXML Label LbBemVindo, MedicoId, MedicoNome,MedicoIdade, MedicoQuantPaciente;
-    @FXML Button BtMedico, BtPaciente, BtRelatorio, BtAddMedico;
+    @FXML Label LbBemVindo, MedicoId, MedicoNome,MedicoIdade, MedicoQuantPaciente, LbMedicoSenha, LbMedicoNovaSenha, LbMedicoConfSenha;
+    @FXML Button BtMedico, BtPaciente, BtRelatorio, BtAddMedico, BtMedicoConfirma;
     @FXML TextField TfPacienteNome, TfPacienteCpf, TfPacienteIdade, TfMedicoNome, TfMedicoIdade;
-    @FXML PasswordField PfMedicoSenha;
+    @FXML PasswordField PfMedicoSenha, PfMedicoNovaSenha, PfMedicoConfSenha;
     @FXML ChoiceBox<String> CbPacienteSexo;
     @FXML TableView<HomeGetSet> TbPaciente, TbMedico;
     @FXML TableColumn<HomeGetSet, String> ClPacienteNome, ClPacienteSexo, ClPacienteCpf, ClMedicoNome;
@@ -170,6 +170,20 @@ public class HomeController {
     }
 
     @FXML
+    private void MudaSenha(){
+
+    }
+
+    @FXML
+    private void TrocaSenha(){
+        LbMedicoNovaSenha.setVisible(true);
+        PfMedicoNovaSenha.setVisible(true);
+        LbMedicoConfSenha.setVisible(true);
+        PfMedicoConfSenha.setVisible(true);
+        BtMedicoConfirma.setVisible(true);
+    }
+
+    @FXML
     private void TrocarPane(ActionEvent event) {
         //Esconde mensagem do inicio
         LbBemVindo.setVisible(false);
@@ -243,6 +257,9 @@ public class HomeController {
                 TfMedicoIdade.setText(selecao.getMedicoIdade());
 
                 Id = selecao.getMedicoId();
+
+                PfMedicoSenha.setVisible(false);
+                LbMedicoSenha.setVisible(false);
 
             } catch (Exception e) {
                 System.err.println("Ocorreu um erro Clique Mouse na tabela medico: " + e.getMessage());

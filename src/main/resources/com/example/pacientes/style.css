@@ -16,6 +16,7 @@
 }
 .menu_botao{
     -fx-background-color: transparent;
+    -fx-background-radius: 10;
 }
 .menu_botao:hover{
     -fx-background-color: #4f97f7;

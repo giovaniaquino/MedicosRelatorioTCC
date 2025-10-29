@@ -19,7 +19,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="MainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="800.0" minWidth="1300.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pacientes.controller.HomeController">
+<BorderPane fx:id="MainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="800.0" minWidth="1300.0" style="-fx-background-radius: 10;" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pacientes.controller.HomeController">
    <left>
       <AnchorPane minWidth="-Infinity" prefHeight="600.0" prefWidth="239.0" styleClass="menu_lateral" stylesheets="@style.css" BorderPane.alignment="CENTER">
          <children>
@@ -218,12 +218,12 @@
                         <Font name="Yu Gothic UI Regular" size="27.0" />
                      </font>
                   </Label>
-                  <Label layoutX="149.0" layoutY="418.0" text="Senha:">
+                  <Label fx:id="LbMedicoSenha" layoutX="149.0" layoutY="418.0" text="Senha:">
                      <font>
                         <Font name="Yu Gothic UI Regular" size="27.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="TfMedicoNome" layoutX="243.0" layoutY="278.0" prefHeight="37.0" prefWidth="176.0">
+                  <TextField fx:id="TfMedicoNome" layoutX="243.0" layoutY="271.0" prefHeight="37.0" prefWidth="176.0">
                      <font>
                         <Font size="18.0" />
                      </font></TextField>
@@ -260,7 +260,7 @@
                               <Font name="Yu Gothic Regular" size="12.0" />
                            </font>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="90.0" styleClass="botao" stylesheets="@style.css" text="Trocar Senha">
+                        <Button mnemonicParsing="false" onAction="#TrocaSenha" prefHeight="45.0" prefWidth="90.0" styleClass="botao" stylesheets="@style.css" text="Trocar Senha">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
@@ -270,6 +270,27 @@
                         </Button>
                      </children>
                   </HBox>
+                  <Label fx:id="LbMedicoNovaSenha" layoutX="156.0" layoutY="408.0" text="Nova Senha:" visible="false">
+                     <font>
+                        <Font name="Yu Gothic UI Regular" size="27.0" />
+                     </font>
+                  </Label>
+                  <PasswordField fx:id="PfMedicoNovaSenha" layoutX="316.0" layoutY="408.0" prefHeight="37.0" prefWidth="176.0" visible="false">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </PasswordField>
+                  <Label fx:id="LbMedicoConfSenha" layoutX="156.0" layoutY="463.0" text="Confirma Senha:" visible="false">
+                     <font>
+                        <Font name="Yu Gothic UI Regular" size="27.0" />
+                     </font>
+                  </Label>
+                  <PasswordField fx:id="PfMedicoConfSenha" layoutX="363.0" layoutY="463.0" prefHeight="37.0" prefWidth="176.0" visible="false">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </PasswordField>
+                  <Button fx:id="BtMedicoConfirma" layoutX="182.0" layoutY="538.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="80.0" styleClass="botao" stylesheets="@style.css" text="Confirma" visible="false" />
                </children>
             </AnchorPane>
             <AnchorPane fx:id="PaneMedico" prefHeight="200.0" prefWidth="200.0" visible="false">
