@@ -120,8 +120,8 @@ public class HomeDb {
     public void AtualizaMedico(HomeGetSet medico){
         String sql = "UPDATE login SET user = ?, idade = ? where id_medico = ?";
 
-        try (Connection conexao = new ConnectionDb().connect();
-             PreparedStatement pstm = conexao.prepareStatement(sql)){
+        try (Connection conn = new ConnectionDb().connect();
+             PreparedStatement pstm = conn.prepareStatement(sql)){
 
             //Executa Query
             pstm.setString(1, medico.getMedicoNome());
@@ -137,8 +137,8 @@ public class HomeDb {
     public void TrocaSenha(HomeGetSet medico){
         String sql = "UPDATE login SET hash = ? where id_medico = ?";
 
-        try (Connection conexao = new ConnectionDb().connect();
-             PreparedStatement pstm = conexao.prepareStatement(sql)){
+        try (Connection conn = new ConnectionDb().connect();
+             PreparedStatement pstm = conn.prepareStatement(sql)){
 
             //Executa Query
             pstm.setString(1, medico.getMedicoSenha());
@@ -171,5 +171,30 @@ public class HomeDb {
             System.err.println("Ocorreu um erro de SQL Lista Pacientes: " + e.getMessage());
         }
         return lista;
+    }
+
+    public ObservableList<String> ListaNomePaciente(HomeGetSet medico){
+        String sql = "SELECT Nome FROM paciente WHERE id_medico = ?";
+
+        //Lista vazia para armazenar os nomes
+        ObservableList<String> nomesPacientes = FXCollections.observableArrayList();
+
+        try (Connection conn = new ConnectionDb().connect();
+             PreparedStatement pstm = conn.prepareStatement(sql)){
+
+            pstm.setInt(1, medico.getMedicoId());
+
+            try (ResultSet rs = pstm.executeQuery()){
+                while (rs.next()) {
+                    nomesPacientes.add(rs.getString("Nome"));
+                }
+            } catch (Exception e) {
+                System.err.println("Ocorreu um erro no Result Set da Lista Pacientes para Relatorio: " + e.getMessage());
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao Listar Pacientes para Relatorio: "+e);
+        }
+        return nomesPacientes;
     }
 }

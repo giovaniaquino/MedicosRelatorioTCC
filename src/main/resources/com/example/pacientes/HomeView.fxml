@@ -198,7 +198,7 @@
                         <Font name="Yu Gothic Regular" size="27.0" />
                      </font>
                   </Label>
-                  <ChoiceBox layoutX="785.0" layoutY="110.0" prefHeight="34.0" prefWidth="164.0" />
+                  <ChoiceBox fx:id="CbRelatorio" layoutX="785.0" layoutY="110.0" prefHeight="34.0" prefWidth="164.0" />
                </children>
             </AnchorPane>
             <AnchorPane fx:id="PaneAddMedico" prefHeight="200.0" prefWidth="200.0" visible="false">

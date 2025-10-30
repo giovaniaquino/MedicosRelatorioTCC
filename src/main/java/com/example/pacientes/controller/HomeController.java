@@ -22,7 +22,7 @@ public class HomeController {
     @FXML Button BtMedico, BtPaciente, BtRelatorio, BtAddMedico, BtMedicoConfirma;
     @FXML TextField TfPacienteNome, TfPacienteCpf, TfPacienteIdade, TfMedicoNome, TfMedicoIdade;
     @FXML PasswordField PfMedicoSenha, PfMedicoNovaSenha, PfMedicoConfSenha;
-    @FXML ChoiceBox<String> CbPacienteSexo;
+    @FXML ChoiceBox<String> CbPacienteSexo, CbRelatorio;
     @FXML TableView<HomeGetSet> TbPaciente, TbMedico;
     @FXML TableColumn<HomeGetSet, String> ClPacienteNome, ClPacienteSexo, ClPacienteCpf, ClMedicoNome;
     @FXML TableColumn<HomeGetSet, Integer> ClPacienteIdade, ClMedicoId;
@@ -222,6 +222,18 @@ public class HomeController {
     }
 
     @FXML
+    private void SelecionaPaciente(){
+
+        HomeGetSet medico = new HomeGetSet();
+        medico.setMedicoId(Integer.parseInt(LoginController.Id));
+
+        HomeDb paciente = new HomeDb();
+
+        ObservableList<String> listaDeNomes = paciente.ListaNomePaciente(medico);
+        CbRelatorio.getItems().setAll(listaDeNomes);
+    }
+
+    @FXML
     private void TrocarPane(ActionEvent event) {
         //Esconde mensagem do inicio
         LbBemVindo.setVisible(false);
@@ -249,6 +261,8 @@ public class HomeController {
             PanePaciente.setVisible(false);
             PaneRelatorio.setVisible(true);
             PaneAddMedico.setVisible(false);
+
+            SelecionaPaciente();
 
         } else if (event.getSource() == BtAddMedico) {
             PaneMedico.setVisible(false);
