@@ -197,4 +197,40 @@ public class HomeDb {
         }
         return nomesPacientes;
     }
+
+    public ObservableList<HomeGetSet> Emocoes(String dataInicio, String dataFim) {
+        ObservableList<HomeGetSet> listaDados = FXCollections.observableArrayList();
+
+        String sql = "SELECT DATE(data) AS dia, emocoes, COUNT(*) AS contagem " +
+                "FROM captura " +
+                "WHERE data BETWEEN ? AND ? " +
+                "GROUP BY dia, emocoes " +
+                "ORDER BY dia, emocoes";
+
+        try (Connection conn = new ConnectionDb().connect();
+             PreparedStatement pstm = conn.prepareStatement(sql)) {
+
+            pstm.setString(1, dataInicio + " 00:00:00");
+            pstm.setString(2, dataFim + " 23:59:59");
+
+            try (ResultSet rs = pstm.executeQuery()) {
+                while (rs.next()) {
+                    HomeGetSet data = new HomeGetSet();
+                    data.EmocaoData(
+                            rs.getString("dia"),
+                            rs.getString("emocoes"),
+                            rs.getInt("contagem")
+                    );
+
+                    listaDados.add(data);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Ocorreu um erro de SQL ao buscar dados de emoção: " + e.getMessage());
+            e.printStackTrace(); // É bom ver o stack trace para erros complexos
+        }
+
+        return listaDados;
+    }
 }

@@ -1,8 +1,8 @@
 package com.example.pacientes.get_set;
 
 public class HomeGetSet {
-    private String PacienteNome, PacienteCpf, PacienteIdade, PacienteSexo, MedicoNome, MedicoIdade, MedicoSenha;
-    private int MedicoId, PacienteId;
+    private String PacienteNome, PacienteCpf, PacienteIdade, PacienteSexo, MedicoNome, MedicoIdade, MedicoSenha, Dia, Emocao;
+    private int MedicoId, PacienteId, Contagem;
 
     public String getPacienteNome() {
         return PacienteNome;
@@ -74,5 +74,35 @@ public class HomeGetSet {
 
     public void setPacienteId(int pacienteId) {
         PacienteId = pacienteId;
+    }
+
+    public void EmocaoData(String dia, String emocao, int contagem) {
+        this.Dia = dia;
+        this.Emocao = emocao;
+        this.Contagem = contagem;
+    }
+
+    public String getDia() {
+        return Dia;
+    }
+
+    public void setDia(String dia) {
+        Dia = dia;
+    }
+
+    public String getEmocao() {
+        return Emocao;
+    }
+
+    public void setEmocao(String emocao) {
+        Emocao = emocao;
+    }
+
+    public int getContagem() {
+        return Contagem;
+    }
+
+    public void setContagem(int contagem) {
+        Contagem = contagem;
     }
 }

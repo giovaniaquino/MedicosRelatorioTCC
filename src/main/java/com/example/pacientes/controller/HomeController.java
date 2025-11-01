@@ -3,9 +3,14 @@ package com.example.pacientes.controller;
 import com.example.pacientes.Hash;
 import com.example.pacientes.data_base.HomeDb;
 import com.example.pacientes.get_set.HomeGetSet;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
@@ -13,6 +18,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
 
 public class HomeController {
 
@@ -26,7 +32,17 @@ public class HomeController {
     @FXML TableView<HomeGetSet> TbPaciente, TbMedico;
     @FXML TableColumn<HomeGetSet, String> ClPacienteNome, ClPacienteSexo, ClPacienteCpf, ClMedicoNome;
     @FXML TableColumn<HomeGetSet, Integer> ClPacienteIdade, ClMedicoId;
+    @FXML LineChart<String, Number> LineChart;
+    private XYChart.Series<String, Number> FelizSeries;
+    private XYChart.Series<String, Number> TristeSeries;
+    private XYChart.Series<String, Number> NeutroSeries;
+    private ObservableList<PieChart.Data> PieChartData;
+    @FXML PieChart PieChart;
+    @FXML DatePicker DpDataInicio;
+    @FXML DatePicker DpDataFim;
     private int Id;
+
+    private HomeDb homeDb;
 
 
     @FXML
@@ -37,6 +53,9 @@ public class HomeController {
         if (LoginController.Nivel.equals("medico")){
             BtAddMedico.setVisible(false);
         }
+
+        this.homeDb = new HomeDb(); // Instancia o DB helper
+        InicializarGrafico();
     }
 
     @FXML
@@ -231,6 +250,167 @@ public class HomeController {
 
         ObservableList<String> listaDeNomes = paciente.ListaNomePaciente(medico);
         CbRelatorio.getItems().setAll(listaDeNomes);
+    }
+
+    private void InicializarGrafico() {
+        //Criar as Séries (linhas)
+        FelizSeries = new XYChart.Series<>();
+        FelizSeries.setName("Feliz");
+
+        TristeSeries = new XYChart.Series<>();
+        TristeSeries.setName("Triste");
+
+        NeutroSeries = new XYChart.Series<>();
+        NeutroSeries.setName("Neutro");
+
+        //Adiciona as séries no gráfico
+        if (LineChart != null) {
+            LineChart.getData().addAll(FelizSeries, TristeSeries, NeutroSeries);
+            LineChart.setAnimated(false);
+        }
+
+        //Inicializa a lista de dados da pizza com valores zerados
+        PieChartData = FXCollections.observableArrayList(
+                new PieChart.Data("Feliz", 0),
+                new PieChart.Data("Triste", 0),
+                new PieChart.Data("Neutro", 0)
+        );
+
+        // Associa a lista de dados ao gráfico de pizza
+        if (PieChart != null) {
+            PieChart.setData(PieChartData);
+            PieChart.setTitle("Total no Período");
+            PieChart.setLabelsVisible(false);
+            
+
+        }
+
+        //Definir datas padrão para os DatePickers
+        if (DpDataFim != null && DpDataInicio != null) {
+            DpDataFim.setValue(LocalDate.now());
+            DpDataInicio.setValue(LocalDate.now().minusDays(30)); // Padrão: últimos 30 dias
+        }
+    }
+
+    //Chamado por botao atualizar
+    @FXML
+    private void AtualizarGraficoAction() {
+        LocalDate inicio = DpDataInicio.getValue();
+        LocalDate fim = DpDataFim.getValue();
+
+        if (inicio == null || fim == null) {
+            // Mostrar um alerta para o usuário
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Por favor, selecione data de início e fim.");
+            alert.showAndWait();
+            return;
+        }
+
+        // Converte LocalDate para String no formato 'YYYY-MM-DD'
+        String dataInicioStr = inicio.toString();
+        String dataFimStr = fim.toString();
+
+        // O Task para executar a consulta em background
+        Task<ObservableList<HomeGetSet>> loadDataTask = new Task<>() {
+            @Override
+            protected ObservableList<HomeGetSet> call() throws Exception {
+                // Esta linha executa em uma THREAD SEPARADA
+                return homeDb.Emocoes(dataInicioStr, dataFimStr);
+            }
+        };
+
+        //O que fazer QUANDO a task terminar com SUCESSO
+        loadDataTask.setOnSucceeded(e -> {
+            // Esta parte é executada de volta na THREAD DO JAVAFX
+            ObservableList<HomeGetSet> dados = loadDataTask.getValue();
+            processarDadosDoGrafico(dados);
+            processarDadosGraficoPizza(dados);
+        });
+
+        //O que fazer se a task FALHAR
+        loadDataTask.setOnFailed(e -> {
+            // Mostrar erro
+            loadDataTask.getException().printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao carregar dados do gráfico: " + loadDataTask.getException().getMessage());
+            alert.showAndWait();
+        });
+
+        // 5. Inicia a task!
+        new Thread(loadDataTask).start();
+    }
+
+    private void processarDadosDoGrafico(ObservableList<HomeGetSet> dados) {
+        // Listas temporárias para armazenar os pontos
+        ObservableList<XYChart.Data<String, Number>> FelizData = FXCollections.observableArrayList();
+        ObservableList<XYChart.Data<String, Number>> TristeData = FXCollections.observableArrayList();
+        ObservableList<XYChart.Data<String, Number>> NeutroData = FXCollections.observableArrayList();
+
+        // Itera sobre os resultados já agregados
+        for (HomeGetSet item : dados) {
+            String dia = item.getDia();
+            int contagem = item.getContagem();
+
+            switch (item.getEmocao()) {
+                case "happy":
+                    FelizData.add(new XYChart.Data<>(dia, contagem));
+                    break;
+                case "sad":
+                    TristeData.add(new XYChart.Data<>(dia, contagem));
+                    break;
+                case "neutral":
+                    NeutroData.add(new XYChart.Data<>(dia, contagem));
+                    break;
+            }
+        }
+
+        // Limpa os dados antigos ANTES de adicionar os novos
+        FelizSeries.getData().clear();
+        TristeSeries.getData().clear();
+        NeutroSeries.getData().clear();
+
+        //Adiciona os novos dados de uma vez
+        FelizSeries.getData().addAll(FelizData);
+        TristeSeries.getData().addAll(TristeData);
+        NeutroSeries.getData().addAll(NeutroData);
+
+        //Desabilita símbolos (pontos) se houver muitos dados
+        LineChart.setCreateSymbols(dados.size() < 100); // Só mostra pontos se houver menos de 100 dados totais
+    }
+
+    private void processarDadosGraficoPizza(ObservableList<HomeGetSet> dados) {
+        //Zera os contadores
+        long totalFeliz = 0;
+        long totalTriste = 0;
+        long totalNeutro = 0;
+
+        //Itera sobre a lista de dados e soma os totais
+        for (HomeGetSet item : dados) {
+            switch (item.getEmocao()) {
+                case "happy":
+                    totalFeliz += item.getContagem();
+                    break;
+                case "sad":
+                    totalTriste += item.getContagem();
+                    break;
+                case "neutral":
+                    totalNeutro += item.getContagem();
+                    break;
+            }
+        }
+
+        //Atualiza os valores do gráfico
+        for (PieChart.Data slice : PieChartData) {
+            switch (slice.getName()) {
+                case "Feliz":
+                    slice.setPieValue(totalFeliz);
+                    break;
+                case "Triste":
+                    slice.setPieValue(totalTriste);
+                    break;
+                case "Neutro":
+                    slice.setPieValue(totalNeutro);
+                    break;
+            }
+        }
     }
 
     @FXML
