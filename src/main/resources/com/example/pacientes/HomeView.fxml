@@ -131,64 +131,81 @@
                         <Font name="Yu Gothic Bold" size="36.0" />
                      </font>
                   </Label>
-                  <Label layoutX="141.0" layoutY="206.0" text="Nome: ">
+                  <Label layoutX="156.0" layoutY="257.0" text="Nome: ">
                      <font>
                         <Font name="Yu Gothic Regular" size="27.0" />
                      </font>
                   </Label>
-                  <Label layoutX="141.0" layoutY="279.0" text="Idade: ">
+                  <Label layoutX="156.0" layoutY="333.0" text="Idade: ">
                      <font>
                         <Font name="Yu Gothic Regular" size="27.0" />
                      </font>
                   </Label>
-                  <Label layoutX="299.0" layoutY="279.0" text="Sexo: ">
+                  <Label layoutX="317.0" layoutY="332.0" text="Sexo: ">
                      <font>
                         <Font name="Yu Gothic Regular" size="27.0" />
                      </font>
                   </Label>
-                  <Label layoutX="141.0" layoutY="339.0" text="CPF: ">
+                  <Label layoutX="156.0" layoutY="410.0" text="CPF: ">
                      <font>
                         <Font name="Yu Gothic Regular" size="27.0" />
                      </font>
                   </Label>
-                  <TableView fx:id="TbPaciente" layoutX="530.0" layoutY="167.0" onMouseClicked="#CliqueMouse" prefHeight="458.0" scaleShape="false">
-                    <columns>
-                      <TableColumn fx:id="ClPacienteNome" prefWidth="151.199951171875" resizable="false" text="Nome" />
-                      <TableColumn fx:id="ClPacienteIdade" minWidth="0.0" prefWidth="62.4000244140625" resizable="false" text="Idade" />
-                        <TableColumn fx:id="ClPacienteSexo" prefWidth="60.0" resizable="false" text="Sexo" />
-                        <TableColumn fx:id="ClPacienteCpf" prefWidth="139.99998779296874" resizable="false" text="CPF" />
-                    </columns>
-                  </TableView>
-                  <TextField fx:id="TfPacienteNome" layoutX="231.0" layoutY="203.0" prefHeight="37.0" prefWidth="176.0">
+                  <TextField fx:id="TfPacienteNome" layoutX="246.0" layoutY="254.0" prefHeight="37.0" prefWidth="176.0" visible="false">
                      <font>
                         <Font size="18.0" />
                      </font>
                   </TextField>
-                  <TextField fx:id="TfPacienteIdade" layoutX="231.0" layoutY="276.0" prefHeight="40.0" prefWidth="60.0">
+                  <TextField fx:id="TfPacienteIdade" layoutX="241.0" layoutY="329.0" prefHeight="40.0" prefWidth="60.0" visible="false">
                      <font>
                         <Font size="18.0" />
                      </font>
                   </TextField>
-                  <ChoiceBox fx:id="CbPacienteSexo" layoutX="376.0" layoutY="283.0" prefHeight="26.0" prefWidth="61.0" />
-                  <TextField fx:id="TfPacienteCpf" layoutX="211.0" layoutY="335.0" prefHeight="37.0" prefWidth="176.0">
+                  <ChoiceBox fx:id="CbPacienteSexo" layoutX="395.0" layoutY="335.0" prefHeight="26.0" prefWidth="61.0" visible="false" />
+                  <TextField fx:id="TfPacienteCpf" layoutX="226.0" layoutY="406.0" prefHeight="37.0" prefWidth="176.0" visible="false">
                      <font>
                         <Font size="18.0" />
                      </font>
                   </TextField>
-                  <HBox fx:id="BtPacienteAtualizar" layoutX="141.0" layoutY="505.0" spacing="30.0">
+                  <HBox fx:id="BtPacienteAtualizar" layoutX="690.0" layoutY="422.0" spacing="30.0">
                      <children>
-                        <Button fx:id="BtPacienteCadastrar" mnemonicParsing="false" onAction="#CadastraPaciente" prefHeight="40.0" styleClass="botao" stylesheets="@style.css" text="Cadastrar">
+                        <Button mnemonicParsing="false" onAction="#AtualizaPaciente" prefHeight="40.0" styleClass="botao" stylesheets="@style.css" text="Atualizar">
                            <font>
                               <Font name="Yu Gothic Regular" size="12.0" />
                            </font>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#AtualizaPaciente" prefHeight="40.0" styleClass="botao" stylesheets="@style.css" text="Atualizar">
+                        <Button fx:id="BtPacienteConfirma" mnemonicParsing="false" onAction="#ConfirmaAtualizacaoPaciente" prefHeight="40.0" styleClass="botao" stylesheets="@style.css" text="Confirma" visible="false">
+                           <font>
+                              <Font name="Yu Gothic Regular" size="12.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="BtPacienteCancela" mnemonicParsing="false" onAction="#LimpaPaciente" prefHeight="40.0" styleClass="botao" stylesheets="@style.css" text="Cancela" visible="false">
                            <font>
                               <Font name="Yu Gothic Regular" size="12.0" />
                            </font>
                         </Button>
                      </children>
                   </HBox>
+                  <Label fx:id="PacienteNomePh" layoutX="247.0" layoutY="259.0" text="PlaceHolder">
+                     <font>
+                        <Font name="Yu Gothic Regular" size="24.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="PacienteIdadePh" layoutX="241.0" layoutY="334.0" text="PH">
+                     <font>
+                        <Font name="Yu Gothic Regular" size="24.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="PacienteSexoPh" layoutX="395.0" layoutY="333.0" text="PH">
+                     <font>
+                        <Font name="Yu Gothic Regular" size="24.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="PacienteCPFPh" layoutX="230.0" layoutY="411.0" text="PH">
+                     <font>
+                        <Font name="Yu Gothic Regular" size="24.0" />
+                     </font>
+                  </Label>
                </children>
             </AnchorPane>
             <AnchorPane fx:id="PaneAddMedico" prefHeight="200.0" prefWidth="200.0" visible="false">
@@ -304,11 +321,6 @@
                            </font>
                         </Label>
                         <Label fx:id="MedicoIdade" text="Idade: ">
-                           <font>
-                              <Font name="Yu Gothic Regular" size="27.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="MedicoQuantPaciente" text="Quantidade de Pacientes: ">
                            <font>
                               <Font name="Yu Gothic Regular" size="27.0" />
                            </font>

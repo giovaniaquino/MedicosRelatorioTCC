@@ -11,47 +11,30 @@ import java.sql.SQLException;
 
 public class HomeDb {
 
-    public String ContaPacientes(HomeGetSet medico){
-        String sql = "SELECT COUNT(*) FROM paciente WHERE id_medico = ?";
+    public HomeGetSet InfoPaciente(){
+        String sql = "SELECT  * FROM paciente";
+        HomeGetSet info = null;
 
         try (Connection conn = new ConnectionDb().connect();
-        PreparedStatement pstm = conn.prepareStatement(sql)){
+        PreparedStatement pstm = conn.prepareStatement(sql);
+        ResultSet rs = pstm.executeQuery()){
 
-            pstm.setInt(1, medico.getMedicoId());
-
-            try(ResultSet rs = pstm.executeQuery()){
-                if (rs.next()){
-                    return String.valueOf(rs.getInt("COUNT(*)"));
-                }
+            if (rs.next()) {
+                info = new HomeGetSet();
+                info.setPacienteNome(rs.getString("Nome"));
+                info.setPacienteIdade(rs.getString("Idade"));
+                info.setPacienteSexo(rs.getString("Sexo"));
+                info.setPacienteCpf(rs.getString("CPF"));
             }
 
         }catch (SQLException e){
-            System.err.println("Ocorreu um erro de Busca Quantidade Pacientes: " + e.getMessage());
+            System.err.println("Ocorreu um erro na Info Paciente: " + e.getMessage());
         }
-        return "0";
-    }
-
-    public void CadastraPaciente(HomeGetSet paciente){
-        String sql = "INSERT INTO paciente (Nome, Idade, Sexo, CPF, id_medico) VALUES (?,?,?,?,?)";
-
-        try (Connection conn = new ConnectionDb().connect();
-             PreparedStatement pstm = conn.prepareStatement(sql)){
-
-            //Executa Query
-            pstm.setString(1, paciente.getPacienteNome());
-            pstm.setString(2, paciente.getPacienteIdade());
-            pstm.setString(3, paciente.getPacienteSexo());
-            pstm.setString(4, paciente.getPacienteCpf());
-            pstm.setInt(5,paciente.getMedicoId());
-            pstm.executeUpdate();
-
-        } catch (SQLException e) {
-            System.err.println("Ocorreu um erro de SQL Cadastra Paciente: " + e.getMessage());
-        }
+        return info;
     }
 
     public void AtualizaPaciente(HomeGetSet paciente){
-        String sql = "UPDATE paciente SET Nome = ?, Idade = ?, Sexo = ?, CPF = ? where id_paciente = ?";
+        String sql = "UPDATE paciente SET Nome = ?, Idade = ?, Sexo = ?, CPF = ?";
 
         try (Connection conexao = new ConnectionDb().connect();
              PreparedStatement pstm = conexao.prepareStatement(sql)){
@@ -61,43 +44,11 @@ public class HomeDb {
             pstm.setString(2, paciente.getPacienteIdade());
             pstm.setString(3, paciente.getPacienteSexo());
             pstm.setString(4, paciente.getPacienteCpf());
-            pstm.setInt(5,paciente.getPacienteId());
             pstm.executeUpdate();
 
         } catch (SQLException e) {
             System.err.println("Erro ao atualizar paciente: "+e);
         }
-    }
-
-    public ObservableList<HomeGetSet> ListaPacientes(HomeGetSet medico){
-        ObservableList<HomeGetSet> lista = FXCollections.observableArrayList();
-        String sql = "SELECT id_paciente, Nome, Idade, Sexo, CPF FROM paciente WHERE id_medico = ?";
-
-        try (Connection conn = new ConnectionDb().connect();
-             PreparedStatement pstm = conn.prepareStatement(sql)){
-
-            pstm.setInt(1, medico.getMedicoId());
-
-            try (ResultSet rs = pstm.executeQuery()){
-                while (rs.next()) {
-
-                    HomeGetSet pacientes = new HomeGetSet();
-
-                    pacientes.setPacienteId(rs.getInt("id_paciente"));
-                    pacientes.setPacienteNome(rs.getString("Nome"));
-                    pacientes.setPacienteIdade(rs.getString("Idade"));
-                    pacientes.setPacienteSexo(rs.getString("Sexo"));
-                    pacientes.setPacienteCpf(rs.getString("CPF"));
-
-                    lista.add(pacientes);
-                }
-            } catch (Exception e) {
-                System.err.println("Ocorreu um erro no Result Set da Lista Pacientes: " + e.getMessage());
-            }
-        } catch (SQLException e) {
-            System.err.println("Ocorreu um erro de SQL Lista Pacientes: " + e.getMessage());
-        }
-        return lista;
     }
 
     public void CadastraMedico(HomeGetSet medico){
@@ -173,11 +124,11 @@ public class HomeDb {
         return lista;
     }
 
-    public ObservableList<String> ListaNomePaciente(HomeGetSet medico){
-        String sql = "SELECT Nome FROM paciente WHERE id_medico = ?";
+    public ObservableList<HomeGetSet> ListaNomePaciente(HomeGetSet medico){
+        String sql = "SELECT id_paciente, Nome FROM paciente WHERE id_medico = ?";
 
         //Lista vazia para armazenar os nomes
-        ObservableList<String> nomesPacientes = FXCollections.observableArrayList();
+        ObservableList<HomeGetSet> nomesPacientes = FXCollections.observableArrayList();
 
         try (Connection conn = new ConnectionDb().connect();
              PreparedStatement pstm = conn.prepareStatement(sql)){
@@ -186,7 +137,10 @@ public class HomeDb {
 
             try (ResultSet rs = pstm.executeQuery()){
                 while (rs.next()) {
-                    nomesPacientes.add(rs.getString("Nome"));
+                    HomeGetSet paciente = new HomeGetSet();
+                    paciente.setPacienteId(rs.getInt("id_paciente"));
+                    paciente.setPacienteNome(rs.getString("Nome"));
+                    nomesPacientes.add(paciente);
                 }
             } catch (Exception e) {
                 System.err.println("Ocorreu um erro no Result Set da Lista Pacientes para Relatorio: " + e.getMessage());
@@ -198,12 +152,12 @@ public class HomeDb {
         return nomesPacientes;
     }
 
-    public ObservableList<HomeGetSet> Emocoes(String dataInicio, String dataFim) {
+    public ObservableList<HomeGetSet> Emocoes(String dataInicio, String dataFim, Integer id_paciente) {
         ObservableList<HomeGetSet> listaDados = FXCollections.observableArrayList();
 
         String sql = "SELECT DATE(data) AS dia, emocoes, COUNT(*) AS contagem " +
                 "FROM captura " +
-                "WHERE data BETWEEN ? AND ? " +
+                "WHERE data BETWEEN ? AND ? AND id_paciente = ? " +
                 "GROUP BY dia, emocoes " +
                 "ORDER BY dia, emocoes";
 
@@ -212,6 +166,7 @@ public class HomeDb {
 
             pstm.setString(1, dataInicio + " 00:00:00");
             pstm.setString(2, dataFim + " 23:59:59");
+            pstm.setInt(3, id_paciente);
 
             try (ResultSet rs = pstm.executeQuery()) {
                 while (rs.next()) {
@@ -228,7 +183,7 @@ public class HomeDb {
 
         } catch (SQLException e) {
             System.err.println("Ocorreu um erro de SQL ao buscar dados de emoção: " + e.getMessage());
-            e.printStackTrace(); // É bom ver o stack trace para erros complexos
+            e.printStackTrace();
         }
 
         return listaDados;

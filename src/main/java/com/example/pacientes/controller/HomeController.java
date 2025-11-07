@@ -16,6 +16,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
@@ -24,18 +25,22 @@ public class HomeController {
 
     @FXML BorderPane MainPane;
     @FXML AnchorPane PaneMedico, PanePaciente, PaneRelatorio, PaneAddMedico;
-    @FXML Label LbBemVindo, MedicoId, MedicoNome,MedicoIdade, MedicoQuantPaciente, LbMedicoSenha, LbMedicoNovaSenha, LbMedicoConfSenha, LbMedicoErro;
-    @FXML Button BtMedico, BtPaciente, BtRelatorio, BtAddMedico, BtMedicoConfirma;
+    @FXML Label LbBemVindo, MedicoId, MedicoNome,MedicoIdade, LbMedicoSenha, LbMedicoNovaSenha, LbMedicoConfSenha, LbMedicoErro;
+    @FXML Label PacienteNomePh, PacienteIdadePh, PacienteSexoPh, PacienteCPFPh;
+    @FXML Button BtMedico, BtPaciente, BtRelatorio, BtAddMedico, BtMedicoConfirma, BtPacienteConfirma, BtPacienteCancela;
     @FXML TextField TfPacienteNome, TfPacienteCpf, TfPacienteIdade, TfMedicoNome, TfMedicoIdade;
     @FXML PasswordField PfMedicoSenha, PfMedicoNovaSenha, PfMedicoConfSenha;
-    @FXML ChoiceBox<String> CbPacienteSexo, CbRelatorio;
+    @FXML ChoiceBox<String> CbPacienteSexo;
+    @FXML ChoiceBox<HomeGetSet> CbRelatorio;
     @FXML TableView<HomeGetSet> TbPaciente, TbMedico;
-    @FXML TableColumn<HomeGetSet, String> ClPacienteNome, ClPacienteSexo, ClPacienteCpf, ClMedicoNome;
-    @FXML TableColumn<HomeGetSet, Integer> ClPacienteIdade, ClMedicoId;
+    @FXML TableColumn<HomeGetSet, String> ClMedicoNome;
+    @FXML TableColumn<HomeGetSet, Integer> ClMedicoId;
     @FXML LineChart<String, Number> LineChart;
     private XYChart.Series<String, Number> FelizSeries;
     private XYChart.Series<String, Number> TristeSeries;
     private XYChart.Series<String, Number> NeutroSeries;
+    private XYChart.Series<String, Number> BravoSeries;
+    private XYChart.Series<String, Number> MedoSeries;
     private ObservableList<PieChart.Data> PieChartData;
     @FXML PieChart PieChart;
     @FXML DatePicker DpDataInicio;
@@ -56,6 +61,8 @@ public class HomeController {
 
         this.homeDb = new HomeDb(); // Instancia o DB helper
         InicializarGrafico();
+
+        configurarChoiceBoxPacientes();
     }
 
     @FXML
@@ -64,44 +71,42 @@ public class HomeController {
         MedicoId.setText("ID: "+LoginController.Id);
         MedicoNome.setText("Nome: "+LoginController.Usuario);
         MedicoIdade.setText("Idade: "+LoginController.Idade);
-
-        HomeGetSet medico = new HomeGetSet();
-        medico.setMedicoId(Integer.parseInt(LoginController.Id));
-
-        HomeDb busca = new HomeDb();
-        MedicoQuantPaciente.setText("Quantidade de Pacientes: "+ busca.ContaPacientes(medico));
     }
 
     @FXML
-    private void CadastraPaciente(){
+    private void InfoPaciente(){
+        HomeDb paciente = new HomeDb();
+        HomeGetSet pacienteInfo = paciente.InfoPaciente();
 
-        //Passa valores para o get e set
-        HomeGetSet paciente = new HomeGetSet();
-        paciente.setPacienteNome(TfPacienteNome.getText());
-        paciente.setPacienteIdade(TfPacienteIdade.getText());
-        paciente.setPacienteSexo(CbPacienteSexo.getValue());
-        paciente.setPacienteCpf(TfPacienteCpf.getText());
-        paciente.setMedicoId(Integer.parseInt(LoginController.Id));
-
-        //Faz conexao com classe HomeDb e chama funcao de cadastro
-        HomeDb cadastro = new HomeDb();
-        cadastro.CadastraPaciente(paciente);
-
-        //Limpa campos após cadastro
-        TfPacienteNome.setText("");
-        TfPacienteIdade.setText("");
-        TfPacienteCpf.setText("");
-        CbPacienteSexo.setValue(null);
-
-        //Atualiza tabela de pacientes
-        ListaPacientes();
+        //Mostrar informacoes do Paciente atual
+        PacienteNomePh.setText(pacienteInfo.getPacienteNome());
+        PacienteIdadePh.setText(pacienteInfo.getPacienteIdade());
+        PacienteSexoPh.setText(pacienteInfo.getPacienteSexo());
+        PacienteCPFPh.setText(pacienteInfo.getPacienteCpf());
     }
 
     @FXML
     private void AtualizaPaciente(){
+        //Esconde labels
+        PacienteNomePh.setVisible(false);
+        PacienteIdadePh.setVisible(false);
+        PacienteSexoPh.setVisible(false);
+        PacienteCPFPh.setVisible(false);
+
+        //Mostra campos e botoes
+        TfPacienteNome.setVisible(true);
+        TfPacienteIdade.setVisible(true);
+        TfPacienteCpf.setVisible(true);
+        CbPacienteSexo.setVisible(true);
+        BtPacienteConfirma.setVisible(true);
+        BtPacienteCancela.setVisible(true);
+
+    }
+
+    @FXML
+    private void ConfirmaAtualizacaoPaciente(){
         //Passa valores para o get e set
         HomeGetSet paciente = new HomeGetSet();
-        paciente.setPacienteId(Id);
         paciente.setPacienteNome(TfPacienteNome.getText());
         paciente.setPacienteIdade(TfPacienteIdade.getText());
         paciente.setPacienteSexo(CbPacienteSexo.getValue());
@@ -111,34 +116,34 @@ public class HomeController {
         HomeDb atualiza = new HomeDb();
         atualiza.AtualizaPaciente(paciente);
 
-        //Limpa campos após cadastro
+        InfoPaciente();
+        LimpaPaciente();
+    }
+
+    @FXML
+    private void LimpaPaciente(){
+        //Limpa campos apos atualizacao
         TfPacienteNome.setText("");
         TfPacienteIdade.setText("");
         TfPacienteCpf.setText("");
         CbPacienteSexo.setValue(null);
 
-        ListaPacientes();
-    }
+        //Esconde campos
+        TfPacienteNome.setVisible(false);
+        TfPacienteIdade.setVisible(false);
+        TfPacienteCpf.setVisible(false);
+        CbPacienteSexo.setVisible(false);
 
-    @FXML
-    private void ListaPacientes() {
-        //adiciona a tabela os pacientes do medico
-        try {
-            HomeDb busca = new HomeDb();
+        //Esconde botoes
+        BtPacienteConfirma.setVisible(false);
+        BtPacienteCancela.setVisible(false);
 
-            HomeGetSet medico = new HomeGetSet();
-            medico.setMedicoId(Integer.parseInt(LoginController.Id));
-
-            ObservableList<HomeGetSet> lista = busca.ListaPacientes(medico);
-            ClPacienteNome.setCellValueFactory(new PropertyValueFactory<>("PacienteNome"));
-            ClPacienteIdade.setCellValueFactory(new PropertyValueFactory<>("PacienteIdade"));
-            ClPacienteSexo.setCellValueFactory(new PropertyValueFactory<>("PacienteSexo"));
-            ClPacienteCpf.setCellValueFactory(new PropertyValueFactory<>("PacienteCpf"));
-            TbPaciente.setItems(lista);
-
-        } catch (Exception e) {
-            System.err.println("Ocorreu um erro na Tabela Pacientes: " + e.getMessage());
-        }
+        //Atualiza cadastro do paciente e deixa a Labels visiveis de volta
+        InfoPaciente();
+        PacienteNomePh.setVisible(true);
+        PacienteIdadePh.setVisible(true);
+        PacienteSexoPh.setVisible(true);
+        PacienteCPFPh.setVisible(true);
     }
 
     @FXML
@@ -240,16 +245,49 @@ public class HomeController {
         BtMedicoConfirma.setVisible(true);
     }
 
+    private void configurarChoiceBoxPacientes() {
+        // Converte um objeto HomeGetSet em uma String para exibição
+        CbRelatorio.setConverter(new StringConverter<HomeGetSet>() {
+            @Override
+            public String toString(HomeGetSet paciente) {
+                // Se o paciente for nulo ou não tiver nome, mostramos "Todos"
+                return (paciente == null || paciente.getPacienteNome() == null) ? "" : paciente.getPacienteNome();
+            }
+
+            @Override
+            public HomeGetSet fromString(String string) {
+                //Função sem uso, criada para eliminar erro da StringConverter
+                return null;
+            }
+        });
+
+        // Adiciona um listener. Quando o usuário MUDAR o paciente,
+        // os gráficos são atualizados automaticamente.
+        CbRelatorio.valueProperty().addListener((obs, oldVal, newVal) -> {
+            // Se o valor novo for diferente do antigo, atualiza
+            if (oldVal != newVal) {
+                AtualizarGraficoAction();
+            }
+        });
+    }
+
     @FXML
     private void SelecionaPaciente(){
-
         HomeGetSet medico = new HomeGetSet();
         medico.setMedicoId(Integer.parseInt(LoginController.Id));
 
-        HomeDb paciente = new HomeDb();
+        // Busca a lista de pacientes (com ID e Nome)
+        ObservableList<HomeGetSet> listaDePacientes = homeDb.ListaNomePaciente(medico);
 
-        ObservableList<String> listaDeNomes = paciente.ListaNomePaciente(medico);
-        CbRelatorio.getItems().setAll(listaDeNomes);
+        HomeGetSet valorAtual = CbRelatorio.getValue();
+
+        CbRelatorio.getItems().clear();
+        CbRelatorio.getItems().addAll(listaDePacientes);
+
+        // Tenta reselecionar o que estava selecionado
+        if (valorAtual != null && CbRelatorio.getItems().contains(valorAtual)) {
+            CbRelatorio.setValue(valorAtual);
+            }
     }
 
     private void InicializarGrafico() {
@@ -263,9 +301,15 @@ public class HomeController {
         NeutroSeries = new XYChart.Series<>();
         NeutroSeries.setName("Neutro");
 
+        BravoSeries = new XYChart.Series<>();
+        BravoSeries.setName("Bravo");
+
+        MedoSeries = new XYChart.Series<>();
+        MedoSeries.setName("Medo");
+
         //Adiciona as séries no gráfico
         if (LineChart != null) {
-            LineChart.getData().addAll(FelizSeries, TristeSeries, NeutroSeries);
+            LineChart.getData().addAll(FelizSeries, TristeSeries, NeutroSeries, BravoSeries, MedoSeries);
             LineChart.setAnimated(false);
         }
 
@@ -273,7 +317,9 @@ public class HomeController {
         PieChartData = FXCollections.observableArrayList(
                 new PieChart.Data("Feliz", 0),
                 new PieChart.Data("Triste", 0),
-                new PieChart.Data("Neutro", 0)
+                new PieChart.Data("Neutro", 0),
+                new PieChart.Data("Bravo", 0),
+                new PieChart.Data("Medo", 0)
         );
 
         // Associa a lista de dados ao gráfico de pizza
@@ -281,7 +327,6 @@ public class HomeController {
             PieChart.setData(PieChartData);
             PieChart.setTitle("Total no Período");
             PieChart.setLabelsVisible(false);
-            
 
         }
 
@@ -309,12 +354,23 @@ public class HomeController {
         String dataInicioStr = inicio.toString();
         String dataFimStr = fim.toString();
 
+        // Pega o paciente selecionado e seu ID
+        HomeGetSet pacienteSelecionado = CbRelatorio.getValue();
+        Integer pacienteId = null;
+
+        // Se um paciente foi selecionado E ele tem um ID > 0 (não é o "Todos")
+        if (pacienteSelecionado != null && pacienteSelecionado.getPacienteId() > 0) {
+            pacienteId = pacienteSelecionado.getPacienteId();
+        }
+
+        final Integer idParaTask = pacienteId;
+
         // O Task para executar a consulta em background
         Task<ObservableList<HomeGetSet>> loadDataTask = new Task<>() {
             @Override
             protected ObservableList<HomeGetSet> call() throws Exception {
                 // Esta linha executa em uma THREAD SEPARADA
-                return homeDb.Emocoes(dataInicioStr, dataFimStr);
+                return homeDb.Emocoes(dataInicioStr, dataFimStr, idParaTask);
             }
         };
 
@@ -343,6 +399,8 @@ public class HomeController {
         ObservableList<XYChart.Data<String, Number>> FelizData = FXCollections.observableArrayList();
         ObservableList<XYChart.Data<String, Number>> TristeData = FXCollections.observableArrayList();
         ObservableList<XYChart.Data<String, Number>> NeutroData = FXCollections.observableArrayList();
+        ObservableList<XYChart.Data<String, Number>> BravoData = FXCollections.observableArrayList();
+        ObservableList<XYChart.Data<String, Number>> MedoData = FXCollections.observableArrayList();
 
         // Itera sobre os resultados já agregados
         for (HomeGetSet item : dados) {
@@ -359,6 +417,12 @@ public class HomeController {
                 case "neutral":
                     NeutroData.add(new XYChart.Data<>(dia, contagem));
                     break;
+                case "angry":
+                    BravoData.add(new XYChart.Data<>(dia, contagem));
+                    break;
+                case "fear":
+                    MedoData.add(new XYChart.Data<>(dia, contagem));
+                    break;
             }
         }
 
@@ -366,11 +430,15 @@ public class HomeController {
         FelizSeries.getData().clear();
         TristeSeries.getData().clear();
         NeutroSeries.getData().clear();
+        BravoSeries.getData().clear();
+        MedoSeries.getData().clear();
 
         //Adiciona os novos dados de uma vez
         FelizSeries.getData().addAll(FelizData);
         TristeSeries.getData().addAll(TristeData);
         NeutroSeries.getData().addAll(NeutroData);
+        BravoSeries.getData().addAll(BravoData);
+        MedoSeries.getData().addAll(MedoData);
 
         //Desabilita símbolos (pontos) se houver muitos dados
         LineChart.setCreateSymbols(dados.size() < 100); // Só mostra pontos se houver menos de 100 dados totais
@@ -381,6 +449,8 @@ public class HomeController {
         long totalFeliz = 0;
         long totalTriste = 0;
         long totalNeutro = 0;
+        long totalBravo = 0;
+        long totalMedo = 0;
 
         //Itera sobre a lista de dados e soma os totais
         for (HomeGetSet item : dados) {
@@ -393,6 +463,12 @@ public class HomeController {
                     break;
                 case "neutral":
                     totalNeutro += item.getContagem();
+                    break;
+                case "angry":
+                    totalBravo += item.getContagem();
+                    break;
+                case "fear":
+                    totalMedo += item.getContagem();
                     break;
             }
         }
@@ -408,6 +484,12 @@ public class HomeController {
                     break;
                 case "Neutro":
                     slice.setPieValue(totalNeutro);
+                    break;
+                case "Raiva":
+                    slice.setPieValue(totalBravo);
+                    break;
+                case "Medo":
+                    slice.setPieValue(totalMedo);
                     break;
             }
         }
@@ -433,8 +515,7 @@ public class HomeController {
             PaneRelatorio.setVisible(false);
             PaneAddMedico.setVisible(false);
 
-            //Atualiza tabela de pacientes
-            ListaPacientes();
+            InfoPaciente();
 
         } else if (event.getSource() == BtRelatorio) {
             PaneMedico.setVisible(false);
