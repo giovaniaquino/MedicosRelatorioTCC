@@ -329,12 +329,6 @@ public class HomeController {
         String dataInicioStr = inicio.toString();
         String dataFimStr = fim.toString();
 
-        if (tipoRelatorio.equals("Dias")) {
-            LineChart.getXAxis().setLabel("Dia");
-        } else {
-            LineChart.getXAxis().setLabel("Hora (do dia " + dataInicioStr + ")");
-        }
-
         // O Task para executar a consulta em background
         Task<ObservableList<HomeGetSet>> loadDataTask = new Task<>() {
             @Override
@@ -353,7 +347,7 @@ public class HomeController {
         loadDataTask.setOnSucceeded(e -> {
             // Esta parte é executada de volta na THREAD DO JAVAFX
             ObservableList<HomeGetSet> dados = loadDataTask.getValue();
-            processarDadosDoGrafico(dados);
+            processarDadosDoGrafico(dados, tipoRelatorio, dataInicioStr);
             processarDadosGraficoPizza(dados);
         });
 
@@ -369,7 +363,7 @@ public class HomeController {
         new Thread(loadDataTask).start();
     }
 
-    private void processarDadosDoGrafico(ObservableList<HomeGetSet> dados) {
+    private void processarDadosDoGrafico(ObservableList<HomeGetSet> dados, String tipoRelatorio, String dataInicioStr) {
         // Listas temporárias para armazenar os pontos
         ObservableList<XYChart.Data<String, Number>> FelizData = FXCollections.observableArrayList();
         ObservableList<XYChart.Data<String, Number>> TristeData = FXCollections.observableArrayList();
@@ -401,15 +395,37 @@ public class HomeController {
             }
         }
 
-        //Limpa completamente o gráfico
-        LineChart.getData().clear();
-
         //Adiciona os novos dados de uma vez
         FelizSeries.setData(FelizData);
         TristeSeries.setData(TristeData);
         NeutroSeries.setData(NeutroData);
         BravoSeries.setData(BravoData);
         MedoSeries.setData(MedoData);
+
+        //Limpa completamente o gráfico
+        LineChart.getData().clear();
+
+
+        CategoryAxis xAxis = (CategoryAxis) LineChart.getXAxis();
+
+        if (tipoRelatorio.equals("24 Horas")) {
+            //Cria uma lista com todas as 24 horas NA ORDEM CORRETA
+            ObservableList<String> horas = FXCollections.observableArrayList();
+            for (int i = 0; i < 24; i++) {
+                horas.add(String.format("%02d:00", i));
+            }
+            //Define esta lista como as categorias "travadas" do eixo
+            xAxis.setAutoRanging(false);
+            xAxis.setCategories(horas);
+            xAxis.setLabel("Hora (do dia " + dataInicioStr + ")");
+
+        } else {
+            //Libera o eixo para se ajustar automaticamente
+            xAxis.setCategories(FXCollections.observableArrayList()); // Limpa categorias antigas
+            xAxis.setAutoRanging(true);
+            xAxis.setLabel("Dias");
+        }
+
 
         //Força o grafico a redesenhar tudo do zero para evitar linhas fantasmas
         LineChart.getData().addAll(FelizSeries, TristeSeries, NeutroSeries, BravoSeries, MedoSeries);
