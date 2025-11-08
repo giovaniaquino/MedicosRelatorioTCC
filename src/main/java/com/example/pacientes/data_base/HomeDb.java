@@ -124,35 +124,7 @@ public class HomeDb {
         return lista;
     }
 
-//    public ObservableList<HomeGetSet> ListaNomePaciente(HomeGetSet medico){
-//        String sql = "SELECT id_paciente, Nome FROM paciente WHERE id_medico = ?";
-//
-//        //Lista vazia para armazenar os nomes
-//        ObservableList<HomeGetSet> nomesPacientes = FXCollections.observableArrayList();
-//
-//        try (Connection conn = new ConnectionDb().connect();
-//             PreparedStatement pstm = conn.prepareStatement(sql)){
-//
-//            pstm.setInt(1, medico.getMedicoId());
-//
-//            try (ResultSet rs = pstm.executeQuery()){
-//                while (rs.next()) {
-//                    HomeGetSet paciente = new HomeGetSet();
-//                    paciente.setPacienteId(rs.getInt("id_paciente"));
-//                    paciente.setPacienteNome(rs.getString("Nome"));
-//                    nomesPacientes.add(paciente);
-//                }
-//            } catch (Exception e) {
-//                System.err.println("Ocorreu um erro no Result Set da Lista Pacientes para Relatorio: " + e.getMessage());
-//            }
-//
-//        } catch (SQLException e) {
-//            System.err.println("Erro ao Listar Pacientes para Relatorio: "+e);
-//        }
-//        return nomesPacientes;
-//    }
-
-    public ObservableList<HomeGetSet> Emocoes(String dataInicio, String dataFim) {
+    public ObservableList<HomeGetSet> EmocoesDias(String dataInicio, String dataFim) {
         ObservableList<HomeGetSet> listaDados = FXCollections.observableArrayList();
 
         String sql = "SELECT DATE(data) AS dia, emocoes, COUNT(*) AS contagem " +
@@ -181,7 +153,44 @@ public class HomeDb {
             }
 
         } catch (SQLException e) {
-            System.err.println("Ocorreu um erro de SQL ao buscar dados de emoção: " + e.getMessage());
+            System.err.println("Ocorreu um erro de SQL ao buscar dados de emoção dias: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return listaDados;
+    }
+
+    public ObservableList<HomeGetSet> EmocoesHoras(String dia) {
+        ObservableList<HomeGetSet> listaDados = FXCollections.observableArrayList();
+
+        String sql = "SELECT HOUR(data) AS hora, emocoes, COUNT(*) AS contagem " +
+                "FROM captura " +
+                "WHERE DATE(data) = ? " +
+                "GROUP BY hora, emocoes " +
+                "ORDER BY hora, emocoes";
+
+        try (Connection conn = new ConnectionDb().connect();
+             PreparedStatement pstm = conn.prepareStatement(sql)) {
+
+            pstm.setString(1, dia);
+
+            try (ResultSet rs = pstm.executeQuery()) {
+                while (rs.next()) {
+                    HomeGetSet data = new HomeGetSet();
+                    String horaFormatada = String.format("%02d:00", rs.getInt("hora"));
+
+                    data.EmocaoData(
+                            horaFormatada,
+                            rs.getString("emocoes"),
+                            rs.getInt("contagem")
+                    );
+
+                    listaDados.add(data);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Ocorreu um erro de SQL ao buscar dados de emoção horas: " + e.getMessage());
             e.printStackTrace();
         }
 

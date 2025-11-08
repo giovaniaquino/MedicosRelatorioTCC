@@ -16,7 +16,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
@@ -58,6 +57,19 @@ public class HomeController {
         if (LoginController.Nivel.equals("medico")){
             BtAddMedico.setVisible(false);
         }
+
+        CbRelatorio.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                // Se "Horas" for selecionado, desabilita DpDataFim
+                boolean isHoras = newVal.equals("Horas");
+                DpDataFim.setDisable(isHoras);
+                if (isHoras) {
+                    DpDataFim.setPromptText("Não aplicável");
+                } else {
+                    DpDataFim.setPromptText("");
+                }
+            }
+        });
 
         this.homeDb = new HomeDb(); // Instancia o DB helper
         InicializarGrafico();
@@ -296,10 +308,18 @@ public class HomeController {
     private void AtualizarGraficoAction() {
         LocalDate inicio = DpDataInicio.getValue();
         LocalDate fim = DpDataFim.getValue();
+        String tipoRelatorio = CbRelatorio.getValue();
 
-        if (inicio == null || fim == null) {
+        if (inicio == null) {
             // Mostrar um alerta para o usuário
             Alert alert = new Alert(Alert.AlertType.ERROR, "Por favor, selecione data de início e fim.");
+            alert.showAndWait();
+            return;
+        }
+
+        // Verifica se data final esta nula apenas quando for relatorio Dias
+        if (tipoRelatorio.equals("Dias") && fim == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Por favor, selecione a data de fim para o relatório 'Dias'.");
             alert.showAndWait();
             return;
         }
@@ -308,12 +328,24 @@ public class HomeController {
         String dataInicioStr = inicio.toString();
         String dataFimStr = fim.toString();
 
+        // Atualiza o título do eixo X
+        if (CbRelatorio.getValue().equals("Dias")) {
+            LineChart.getXAxis().setLabel("Dia");
+        } else {
+            LineChart.getXAxis().setLabel("Hora (do dia " + dataInicioStr + ")");
+        }
+
         // O Task para executar a consulta em background
         Task<ObservableList<HomeGetSet>> loadDataTask = new Task<>() {
             @Override
             protected ObservableList<HomeGetSet> call() throws Exception {
                 // Esta linha executa em uma THREAD SEPARADA
-                return homeDb.Emocoes(dataInicioStr, dataFimStr);
+                if (CbRelatorio.getValue().equals("Dias")) {
+                    return homeDb.EmocoesDias(dataInicioStr, dataFimStr);
+                } else if (CbRelatorio.getValue().equals("Horas")) {
+                    return homeDb.EmocoesHoras(dataInicioStr);
+                }
+                return FXCollections.observableArrayList();
             }
         };
 
@@ -377,11 +409,11 @@ public class HomeController {
         MedoSeries.getData().clear();
 
         //Adiciona os novos dados de uma vez
-        FelizSeries.getData().addAll(FelizData);
-        TristeSeries.getData().addAll(TristeData);
-        NeutroSeries.getData().addAll(NeutroData);
-        BravoSeries.getData().addAll(BravoData);
-        MedoSeries.getData().addAll(MedoData);
+        FelizSeries.setData(FelizData);
+        TristeSeries.setData(TristeData);
+        NeutroSeries.setData(NeutroData);
+        BravoSeries.setData(BravoData);
+        MedoSeries.setData(MedoData);
 
         //Desabilita símbolos (pontos) se houver muitos dados
         LineChart.setCreateSymbols(dados.size() < 100); // Só mostra pontos se houver menos de 100 dados totais
@@ -428,7 +460,7 @@ public class HomeController {
                 case "Neutro":
                     slice.setPieValue(totalNeutro);
                     break;
-                case "Raiva":
+                case "Bravo":
                     slice.setPieValue(totalBravo);
                     break;
                 case "Medo":
