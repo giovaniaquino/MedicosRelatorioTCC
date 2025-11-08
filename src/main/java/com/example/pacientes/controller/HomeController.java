@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
@@ -51,7 +52,7 @@ public class HomeController {
     @FXML
     private void initialize(){
         CbPacienteSexo.getItems().setAll("M","F");
-        CbRelatorio.getItems().setAll("Dias", "Horas");
+        CbRelatorio.getItems().setAll("Dias", "24 Horas", "1 Hora");
 
         //Esconder botao de cadastro de medico para usuarios nao administradores
         if (LoginController.Nivel.equals("medico")){
@@ -61,7 +62,7 @@ public class HomeController {
         CbRelatorio.valueProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 // Se "Horas" for selecionado, desabilita DpDataFim
-                boolean isHoras = newVal.equals("Horas");
+                boolean isHoras = newVal.equals("24 Horas");
                 DpDataFim.setDisable(isHoras);
                 if (isHoras) {
                     DpDataFim.setPromptText("Não aplicável");
@@ -273,10 +274,10 @@ public class HomeController {
         MedoSeries = new XYChart.Series<>();
         MedoSeries.setName("Medo");
 
+
         //Adiciona as séries no gráfico
         if (LineChart != null) {
             LineChart.getData().addAll(FelizSeries, TristeSeries, NeutroSeries, BravoSeries, MedoSeries);
-            LineChart.setAnimated(false);
         }
 
         //Inicializa a lista de dados da pizza com valores zerados
@@ -328,8 +329,7 @@ public class HomeController {
         String dataInicioStr = inicio.toString();
         String dataFimStr = fim.toString();
 
-        // Atualiza o título do eixo X
-        if (CbRelatorio.getValue().equals("Dias")) {
+        if (tipoRelatorio.equals("Dias")) {
             LineChart.getXAxis().setLabel("Dia");
         } else {
             LineChart.getXAxis().setLabel("Hora (do dia " + dataInicioStr + ")");
@@ -342,7 +342,7 @@ public class HomeController {
                 // Esta linha executa em uma THREAD SEPARADA
                 if (CbRelatorio.getValue().equals("Dias")) {
                     return homeDb.EmocoesDias(dataInicioStr, dataFimStr);
-                } else if (CbRelatorio.getValue().equals("Horas")) {
+                } else if (CbRelatorio.getValue().equals("24 Horas")) {
                     return homeDb.EmocoesHoras(dataInicioStr);
                 }
                 return FXCollections.observableArrayList();
@@ -401,12 +401,8 @@ public class HomeController {
             }
         }
 
-        // Limpa os dados antigos ANTES de adicionar os novos
-        FelizSeries.getData().clear();
-        TristeSeries.getData().clear();
-        NeutroSeries.getData().clear();
-        BravoSeries.getData().clear();
-        MedoSeries.getData().clear();
+        //Limpa completamente o gráfico
+        LineChart.getData().clear();
 
         //Adiciona os novos dados de uma vez
         FelizSeries.setData(FelizData);
@@ -414,6 +410,9 @@ public class HomeController {
         NeutroSeries.setData(NeutroData);
         BravoSeries.setData(BravoData);
         MedoSeries.setData(MedoData);
+
+        //Força o grafico a redesenhar tudo do zero para evitar linhas fantasmas
+        LineChart.getData().addAll(FelizSeries, TristeSeries, NeutroSeries, BravoSeries, MedoSeries);
 
         //Desabilita símbolos (pontos) se houver muitos dados
         LineChart.setCreateSymbols(dados.size() < 100); // Só mostra pontos se houver menos de 100 dados totais
