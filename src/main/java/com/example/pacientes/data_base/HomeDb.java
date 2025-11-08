@@ -124,40 +124,40 @@ public class HomeDb {
         return lista;
     }
 
-    public ObservableList<HomeGetSet> ListaNomePaciente(HomeGetSet medico){
-        String sql = "SELECT id_paciente, Nome FROM paciente WHERE id_medico = ?";
+//    public ObservableList<HomeGetSet> ListaNomePaciente(HomeGetSet medico){
+//        String sql = "SELECT id_paciente, Nome FROM paciente WHERE id_medico = ?";
+//
+//        //Lista vazia para armazenar os nomes
+//        ObservableList<HomeGetSet> nomesPacientes = FXCollections.observableArrayList();
+//
+//        try (Connection conn = new ConnectionDb().connect();
+//             PreparedStatement pstm = conn.prepareStatement(sql)){
+//
+//            pstm.setInt(1, medico.getMedicoId());
+//
+//            try (ResultSet rs = pstm.executeQuery()){
+//                while (rs.next()) {
+//                    HomeGetSet paciente = new HomeGetSet();
+//                    paciente.setPacienteId(rs.getInt("id_paciente"));
+//                    paciente.setPacienteNome(rs.getString("Nome"));
+//                    nomesPacientes.add(paciente);
+//                }
+//            } catch (Exception e) {
+//                System.err.println("Ocorreu um erro no Result Set da Lista Pacientes para Relatorio: " + e.getMessage());
+//            }
+//
+//        } catch (SQLException e) {
+//            System.err.println("Erro ao Listar Pacientes para Relatorio: "+e);
+//        }
+//        return nomesPacientes;
+//    }
 
-        //Lista vazia para armazenar os nomes
-        ObservableList<HomeGetSet> nomesPacientes = FXCollections.observableArrayList();
-
-        try (Connection conn = new ConnectionDb().connect();
-             PreparedStatement pstm = conn.prepareStatement(sql)){
-
-            pstm.setInt(1, medico.getMedicoId());
-
-            try (ResultSet rs = pstm.executeQuery()){
-                while (rs.next()) {
-                    HomeGetSet paciente = new HomeGetSet();
-                    paciente.setPacienteId(rs.getInt("id_paciente"));
-                    paciente.setPacienteNome(rs.getString("Nome"));
-                    nomesPacientes.add(paciente);
-                }
-            } catch (Exception e) {
-                System.err.println("Ocorreu um erro no Result Set da Lista Pacientes para Relatorio: " + e.getMessage());
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Erro ao Listar Pacientes para Relatorio: "+e);
-        }
-        return nomesPacientes;
-    }
-
-    public ObservableList<HomeGetSet> Emocoes(String dataInicio, String dataFim, Integer id_paciente) {
+    public ObservableList<HomeGetSet> Emocoes(String dataInicio, String dataFim) {
         ObservableList<HomeGetSet> listaDados = FXCollections.observableArrayList();
 
         String sql = "SELECT DATE(data) AS dia, emocoes, COUNT(*) AS contagem " +
                 "FROM captura " +
-                "WHERE data BETWEEN ? AND ? AND id_paciente = ? " +
+                "WHERE data BETWEEN ? AND ? " +
                 "GROUP BY dia, emocoes " +
                 "ORDER BY dia, emocoes";
 
@@ -166,7 +166,6 @@ public class HomeDb {
 
             pstm.setString(1, dataInicio + " 00:00:00");
             pstm.setString(2, dataFim + " 23:59:59");
-            pstm.setInt(3, id_paciente);
 
             try (ResultSet rs = pstm.executeQuery()) {
                 while (rs.next()) {

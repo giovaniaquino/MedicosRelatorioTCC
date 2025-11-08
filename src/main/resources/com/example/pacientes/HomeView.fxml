@@ -336,12 +336,12 @@
                         <Font name="Yu Gothic Bold" size="36.0" />
                      </font>
                   </Label>
-                  <Label layoutX="623.0" layoutY="110.0" text="Paciente:">
+                  <Label layoutX="600.0" layoutY="110.0" text="Tipo Relatorio: ">
                      <font>
                         <Font name="Yu Gothic Regular" size="27.0" />
                      </font>
                   </Label>
-                  <ChoiceBox fx:id="CbRelatorio" layoutX="750.0" layoutY="109.0" prefHeight="34.0" prefWidth="164.0" />
+                  <ChoiceBox fx:id="CbRelatorio" layoutX="795.0" layoutY="109.0" prefHeight="34.0" prefWidth="119.0" />
                   <LineChart fx:id="LineChart" layoutX="27.0" layoutY="334.0" prefHeight="400.0" prefWidth="1007.0">
                     <xAxis>
                       <CategoryAxis side="BOTTOM" />

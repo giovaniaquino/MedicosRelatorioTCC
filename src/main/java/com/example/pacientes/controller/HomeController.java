@@ -30,8 +30,7 @@ public class HomeController {
     @FXML Button BtMedico, BtPaciente, BtRelatorio, BtAddMedico, BtMedicoConfirma, BtPacienteConfirma, BtPacienteCancela;
     @FXML TextField TfPacienteNome, TfPacienteCpf, TfPacienteIdade, TfMedicoNome, TfMedicoIdade;
     @FXML PasswordField PfMedicoSenha, PfMedicoNovaSenha, PfMedicoConfSenha;
-    @FXML ChoiceBox<String> CbPacienteSexo;
-    @FXML ChoiceBox<HomeGetSet> CbRelatorio;
+    @FXML ChoiceBox<String> CbPacienteSexo, CbRelatorio;
     @FXML TableView<HomeGetSet> TbPaciente, TbMedico;
     @FXML TableColumn<HomeGetSet, String> ClMedicoNome;
     @FXML TableColumn<HomeGetSet, Integer> ClMedicoId;
@@ -53,6 +52,7 @@ public class HomeController {
     @FXML
     private void initialize(){
         CbPacienteSexo.getItems().setAll("M","F");
+        CbRelatorio.getItems().setAll("Dias", "Horas");
 
         //Esconder botao de cadastro de medico para usuarios nao administradores
         if (LoginController.Nivel.equals("medico")){
@@ -62,7 +62,6 @@ public class HomeController {
         this.homeDb = new HomeDb(); // Instancia o DB helper
         InicializarGrafico();
 
-        configurarChoiceBoxPacientes();
     }
 
     @FXML
@@ -245,51 +244,6 @@ public class HomeController {
         BtMedicoConfirma.setVisible(true);
     }
 
-    private void configurarChoiceBoxPacientes() {
-        // Converte um objeto HomeGetSet em uma String para exibição
-        CbRelatorio.setConverter(new StringConverter<HomeGetSet>() {
-            @Override
-            public String toString(HomeGetSet paciente) {
-                // Se o paciente for nulo ou não tiver nome, mostramos "Todos"
-                return (paciente == null || paciente.getPacienteNome() == null) ? "" : paciente.getPacienteNome();
-            }
-
-            @Override
-            public HomeGetSet fromString(String string) {
-                //Função sem uso, criada para eliminar erro da StringConverter
-                return null;
-            }
-        });
-
-        // Adiciona um listener. Quando o usuário MUDAR o paciente,
-        // os gráficos são atualizados automaticamente.
-        CbRelatorio.valueProperty().addListener((obs, oldVal, newVal) -> {
-            // Se o valor novo for diferente do antigo, atualiza
-            if (oldVal != newVal) {
-                AtualizarGraficoAction();
-            }
-        });
-    }
-
-    @FXML
-    private void SelecionaPaciente(){
-        HomeGetSet medico = new HomeGetSet();
-        medico.setMedicoId(Integer.parseInt(LoginController.Id));
-
-        // Busca a lista de pacientes (com ID e Nome)
-        ObservableList<HomeGetSet> listaDePacientes = homeDb.ListaNomePaciente(medico);
-
-        HomeGetSet valorAtual = CbRelatorio.getValue();
-
-        CbRelatorio.getItems().clear();
-        CbRelatorio.getItems().addAll(listaDePacientes);
-
-        // Tenta reselecionar o que estava selecionado
-        if (valorAtual != null && CbRelatorio.getItems().contains(valorAtual)) {
-            CbRelatorio.setValue(valorAtual);
-            }
-    }
-
     private void InicializarGrafico() {
         //Criar as Séries (linhas)
         FelizSeries = new XYChart.Series<>();
@@ -354,23 +308,12 @@ public class HomeController {
         String dataInicioStr = inicio.toString();
         String dataFimStr = fim.toString();
 
-        // Pega o paciente selecionado e seu ID
-        HomeGetSet pacienteSelecionado = CbRelatorio.getValue();
-        Integer pacienteId = null;
-
-        // Se um paciente foi selecionado E ele tem um ID > 0 (não é o "Todos")
-        if (pacienteSelecionado != null && pacienteSelecionado.getPacienteId() > 0) {
-            pacienteId = pacienteSelecionado.getPacienteId();
-        }
-
-        final Integer idParaTask = pacienteId;
-
         // O Task para executar a consulta em background
         Task<ObservableList<HomeGetSet>> loadDataTask = new Task<>() {
             @Override
             protected ObservableList<HomeGetSet> call() throws Exception {
                 // Esta linha executa em uma THREAD SEPARADA
-                return homeDb.Emocoes(dataInicioStr, dataFimStr, idParaTask);
+                return homeDb.Emocoes(dataInicioStr, dataFimStr);
             }
         };
 
@@ -522,8 +465,6 @@ public class HomeController {
             PanePaciente.setVisible(false);
             PaneRelatorio.setVisible(true);
             PaneAddMedico.setVisible(false);
-
-            SelecionaPaciente();
 
         } else if (event.getSource() == BtAddMedico) {
             PaneMedico.setVisible(false);
