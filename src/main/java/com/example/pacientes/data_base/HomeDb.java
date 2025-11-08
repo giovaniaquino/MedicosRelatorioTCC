@@ -196,4 +196,43 @@ public class HomeDb {
 
         return listaDados;
     }
+
+    public ObservableList<HomeGetSet> EmocoesMinutos(String dia, int hora) {
+        ObservableList<HomeGetSet> listaDados = FXCollections.observableArrayList();
+
+        // Query para buscar por MINUTO dentro de uma HORA específica
+        String sql = "SELECT MINUTE(data) AS minuto, emocoes, COUNT(*) AS contagem " +
+                "FROM captura " +
+                "WHERE DATE(data) = ? AND HOUR(data) = ? " +
+                "GROUP BY minuto, emocoes " +
+                "ORDER BY minuto, emocoes";
+
+        try (Connection conn = new ConnectionDb().connect();
+             PreparedStatement pstm = conn.prepareStatement(sql)) {
+
+            pstm.setString(1, dia);
+            pstm.setInt(2, hora);
+
+            try (ResultSet rs = pstm.executeQuery()) {
+                while (rs.next()) {
+                    HomeGetSet data = new HomeGetSet();
+                    String minutoFormatado = String.format("%02d:%02d", hora, rs.getInt("minuto"));
+
+                    data.EmocaoData(
+                            minutoFormatado,
+                            rs.getString("emocoes"),
+                            rs.getInt("contagem")
+                    );
+
+                    listaDados.add(data);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Ocorreu um erro de SQL ao buscar dados de emoção minutos: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return listaDados;
+    }
 }

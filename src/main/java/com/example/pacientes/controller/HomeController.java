@@ -26,11 +26,12 @@ public class HomeController {
     @FXML BorderPane MainPane;
     @FXML AnchorPane PaneMedico, PanePaciente, PaneRelatorio, PaneAddMedico;
     @FXML Label LbBemVindo, MedicoId, MedicoNome,MedicoIdade, LbMedicoSenha, LbMedicoNovaSenha, LbMedicoConfSenha, LbMedicoErro;
-    @FXML Label PacienteNomePh, PacienteIdadePh, PacienteSexoPh, PacienteCPFPh;
+    @FXML Label PacienteNomePh, PacienteIdadePh, PacienteSexoPh, PacienteCPFPh, LbHora;
     @FXML Button BtMedico, BtPaciente, BtRelatorio, BtAddMedico, BtMedicoConfirma, BtPacienteConfirma, BtPacienteCancela;
     @FXML TextField TfPacienteNome, TfPacienteCpf, TfPacienteIdade, TfMedicoNome, TfMedicoIdade;
     @FXML PasswordField PfMedicoSenha, PfMedicoNovaSenha, PfMedicoConfSenha;
     @FXML ChoiceBox<String> CbPacienteSexo, CbRelatorio;
+    @FXML ChoiceBox<Integer> CbHora;
     @FXML TableView<HomeGetSet> TbPaciente, TbMedico;
     @FXML TableColumn<HomeGetSet, String> ClMedicoNome;
     @FXML TableColumn<HomeGetSet, Integer> ClMedicoId;
@@ -54,21 +55,41 @@ public class HomeController {
         CbPacienteSexo.getItems().setAll("M","F");
         CbRelatorio.getItems().setAll("Dias", "24 Horas", "1 Hora");
 
+        //Adiciona horas no choice box
+        ObservableList<Integer> horas = FXCollections.observableArrayList();
+        for (int i = 0; i < 24; i++) {
+            horas.add(i);
+        }
+        CbHora.setItems(horas);
+
         //Esconder botao de cadastro de medico para usuarios nao administradores
         if (LoginController.Nivel.equals("medico")){
             BtAddMedico.setVisible(false);
         }
 
+        // Listener para mostrar/esconder campos
         CbRelatorio.valueProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null) {
-                // Se "Horas" for selecionado, desabilita DpDataFim
-                boolean isHoras = newVal.equals("24 Horas");
-                DpDataFim.setDisable(isHoras);
-                if (isHoras) {
-                    DpDataFim.setPromptText("Não aplicável");
-                } else {
+            if (newVal == null) return;
+
+            switch (newVal) {
+                case "Dias":
+                    DpDataFim.setDisable(false);
                     DpDataFim.setPromptText("");
-                }
+                    CbHora.setVisible(false);
+                    LbHora.setVisible(false);
+                    break;
+                case "24 Horas":
+                    DpDataFim.setDisable(true);
+                    DpDataFim.setPromptText("Não aplicável");
+                    CbHora.setVisible(false);
+                    LbHora.setVisible(false);
+                    break;
+                case "1 Hora":
+                    DpDataFim.setDisable(true);
+                    DpDataFim.setPromptText("Não aplicável");
+                    CbHora.setVisible(true);
+                    LbHora.setVisible(true);
+                    break;
             }
         });
 
@@ -310,6 +331,7 @@ public class HomeController {
         LocalDate inicio = DpDataInicio.getValue();
         LocalDate fim = DpDataFim.getValue();
         String tipoRelatorio = CbRelatorio.getValue();
+        Integer horaSelecionada = CbHora.getValue();
 
         if (inicio == null) {
             // Mostrar um alerta para o usuário
@@ -321,6 +343,12 @@ public class HomeController {
         // Verifica se data final esta nula apenas quando for relatorio Dias
         if (tipoRelatorio.equals("Dias") && fim == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Por favor, selecione a data de fim para o relatório 'Dias'.");
+            alert.showAndWait();
+            return;
+        }
+
+        if (tipoRelatorio.equals("1 Hora") && horaSelecionada == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Por favor, selecione uma hora para o relatório '1 Hora'.");
             alert.showAndWait();
             return;
         }
@@ -338,6 +366,8 @@ public class HomeController {
                     return homeDb.EmocoesDias(dataInicioStr, dataFimStr);
                 } else if (CbRelatorio.getValue().equals("24 Horas")) {
                     return homeDb.EmocoesHoras(dataInicioStr);
+                }else if (tipoRelatorio.equals("1 Hora")) {
+                    return homeDb.EmocoesMinutos(dataInicioStr, horaSelecionada);
                 }
                 return FXCollections.observableArrayList();
             }
@@ -347,7 +377,8 @@ public class HomeController {
         loadDataTask.setOnSucceeded(e -> {
             // Esta parte é executada de volta na THREAD DO JAVAFX
             ObservableList<HomeGetSet> dados = loadDataTask.getValue();
-            processarDadosDoGrafico(dados, tipoRelatorio, dataInicioStr);
+            String horaStr = (horaSelecionada != null) ? String.valueOf(horaSelecionada) : null;
+            processarDadosDoGrafico(dados, tipoRelatorio, dataInicioStr, horaStr);
             processarDadosGraficoPizza(dados);
         });
 
@@ -359,11 +390,11 @@ public class HomeController {
             alert.showAndWait();
         });
 
-        // 5. Inicia a task!
+        //Inicia a task!
         new Thread(loadDataTask).start();
     }
 
-    private void processarDadosDoGrafico(ObservableList<HomeGetSet> dados, String tipoRelatorio, String dataInicioStr) {
+    private void processarDadosDoGrafico(ObservableList<HomeGetSet> dados, String tipoRelatorio, String dataInicioStr, String horaStr) {
         // Listas temporárias para armazenar os pontos
         ObservableList<XYChart.Data<String, Number>> FelizData = FXCollections.observableArrayList();
         ObservableList<XYChart.Data<String, Number>> TristeData = FXCollections.observableArrayList();
@@ -409,19 +440,28 @@ public class HomeController {
         CategoryAxis xAxis = (CategoryAxis) LineChart.getXAxis();
 
         if (tipoRelatorio.equals("24 Horas")) {
-            //Cria uma lista com todas as 24 horas NA ORDEM CORRETA
+            // Lógica das 24 Horas
             ObservableList<String> horas = FXCollections.observableArrayList();
             for (int i = 0; i < 24; i++) {
                 horas.add(String.format("%02d:00", i));
             }
-            //Define esta lista como as categorias "travadas" do eixo
             xAxis.setAutoRanging(false);
             xAxis.setCategories(horas);
             xAxis.setLabel("Hora (do dia " + dataInicioStr + ")");
 
+        } else if (tipoRelatorio.equals("1 Hora")) {
+            int hora = Integer.parseInt(horaStr);
+            ObservableList<String> minutos = FXCollections.observableArrayList();
+            // Cria as 60 categorias
+            for (int i = 0; i < 60; i++) {
+                minutos.add(String.format("%02d:%02d", hora, i));
+            }
+            xAxis.setAutoRanging(false);
+            xAxis.setCategories(minutos);
+            xAxis.setLabel("Minutos (da hora " + String.format("%02d:00", hora) + " do dia " + dataInicioStr + ")");
+
         } else {
-            //Libera o eixo para se ajustar automaticamente
-            xAxis.setCategories(FXCollections.observableArrayList()); // Limpa categorias antigas
+            xAxis.setCategories(FXCollections.observableArrayList());
             xAxis.setAutoRanging(true);
             xAxis.setLabel("Dias");
         }
