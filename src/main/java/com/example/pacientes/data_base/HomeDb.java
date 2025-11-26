@@ -127,13 +127,13 @@ public class HomeDb {
     public ObservableList<HomeGetSet> EmocoesDias(String dataInicio, String dataFim) {
         ObservableList<HomeGetSet> listaDados = FXCollections.observableArrayList();
 
-        String sql = "SELECT DATE(data) AS dia, emocoes, COUNT(*) AS contagem " +
-                "FROM captura " +
-                "WHERE data BETWEEN ? AND ? " +
-                "GROUP BY dia, emocoes " +
-                "ORDER BY dia, emocoes";
+        String sql = "SELECT DATE(timestamp) AS dia, emotion, COUNT(*) AS contagem " +
+                "FROM emotions " +
+                "WHERE timestamp BETWEEN ? AND ? " +
+                "GROUP BY dia, emotion " +
+                "ORDER BY dia, emotion";
 
-        try (Connection conn = new ConnectionDb().connect();
+        try (Connection conn = new ConnectionDb().Samuel();
              PreparedStatement pstm = conn.prepareStatement(sql)) {
 
             pstm.setString(1, dataInicio + " 00:00:00");
@@ -144,7 +144,7 @@ public class HomeDb {
                     HomeGetSet data = new HomeGetSet();
                     data.EmocaoData(
                             rs.getString("dia"),
-                            rs.getString("emocoes"),
+                            rs.getString("emotion"),
                             rs.getInt("contagem")
                     );
 
@@ -163,13 +163,13 @@ public class HomeDb {
     public ObservableList<HomeGetSet> EmocoesHoras(String dia) {
         ObservableList<HomeGetSet> listaDados = FXCollections.observableArrayList();
 
-        String sql = "SELECT HOUR(data) AS hora, emocoes, COUNT(*) AS contagem " +
-                "FROM captura " +
-                "WHERE DATE(data) = ? " +
-                "GROUP BY hora, emocoes " +
-                "ORDER BY hora, emocoes";
+        String sql = "SELECT HOUR(timestamp) AS hora, emotion, COUNT(*) AS contagem " +
+                "FROM emotions " +
+                "WHERE DATE(timestamp) = ? " +
+                "GROUP BY hora, emotion " +
+                "ORDER BY hora, emotion";
 
-        try (Connection conn = new ConnectionDb().connect();
+        try (Connection conn = new ConnectionDb().Samuel();
              PreparedStatement pstm = conn.prepareStatement(sql)) {
 
             pstm.setString(1, dia);
@@ -181,7 +181,7 @@ public class HomeDb {
 
                     data.EmocaoData(
                             horaFormatada,
-                            rs.getString("emocoes"),
+                            rs.getString("emotion"),
                             rs.getInt("contagem")
                     );
 
@@ -201,13 +201,13 @@ public class HomeDb {
         ObservableList<HomeGetSet> listaDados = FXCollections.observableArrayList();
 
         // Query para buscar por MINUTO dentro de uma HORA específica
-        String sql = "SELECT MINUTE(data) AS minuto, emocoes, COUNT(*) AS contagem " +
-                "FROM captura " +
-                "WHERE DATE(data) = ? AND HOUR(data) = ? " +
-                "GROUP BY minuto, emocoes " +
-                "ORDER BY minuto, emocoes";
+        String sql = "SELECT MINUTE(timestamp) AS minuto, emotion, COUNT(*) AS contagem " +
+                "FROM emotions " +
+                "WHERE DATE(timestamp) = ? AND HOUR(timestamp) = ? " +
+                "GROUP BY minuto, emotion " +
+                "ORDER BY minuto, emotion";
 
-        try (Connection conn = new ConnectionDb().connect();
+        try (Connection conn = new ConnectionDb().Samuel();
              PreparedStatement pstm = conn.prepareStatement(sql)) {
 
             pstm.setString(1, dia);
@@ -220,7 +220,7 @@ public class HomeDb {
 
                     data.EmocaoData(
                             minutoFormatado,
-                            rs.getString("emocoes"),
+                            rs.getString("emotion"),
                             rs.getInt("contagem")
                     );
 

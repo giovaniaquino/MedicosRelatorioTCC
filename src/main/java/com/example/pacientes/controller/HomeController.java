@@ -408,19 +408,19 @@ public class HomeController {
             int contagem = item.getContagem();
 
             switch (item.getEmocao()) {
-                case "happy":
+                case "Happy":
                     FelizData.add(new XYChart.Data<>(dia, contagem));
                     break;
-                case "sad":
+                case "Sad":
                     TristeData.add(new XYChart.Data<>(dia, contagem));
                     break;
-                case "neutral":
+                case "Neutral":
                     NeutroData.add(new XYChart.Data<>(dia, contagem));
                     break;
-                case "angry":
+                case "Angry":
                     BravoData.add(new XYChart.Data<>(dia, contagem));
                     break;
-                case "fear":
+                case "Fear":
                     MedoData.add(new XYChart.Data<>(dia, contagem));
                     break;
             }
@@ -485,19 +485,19 @@ public class HomeController {
         //Itera sobre a lista de dados e soma os totais
         for (HomeGetSet item : dados) {
             switch (item.getEmocao()) {
-                case "happy":
+                case "Happy":
                     totalFeliz += item.getContagem();
                     break;
-                case "sad":
+                case "Sad":
                     totalTriste += item.getContagem();
                     break;
-                case "neutral":
+                case "Neutral":
                     totalNeutro += item.getContagem();
                     break;
-                case "angry":
+                case "Angry":
                     totalBravo += item.getContagem();
                     break;
-                case "fear":
+                case "Fear":
                     totalMedo += item.getContagem();
                     break;
             }

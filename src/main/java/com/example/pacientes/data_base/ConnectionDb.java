@@ -21,4 +21,19 @@ public class ConnectionDb {
         return conecction;
     }
 
+    public java.sql.Connection Samuel() {
+        java.sql.Connection conecction = null;
+        try {
+            // Informações do banco de dados
+            String url = "jdbc:mysql://192.168.10.15:3306/computer_vision";
+            String user = "root";
+            String senha = "admin";
+            conecction = DriverManager.getConnection(url, user, senha);
+
+        } catch (SQLException e) {
+            System.err.println("Erro na conexão com o banco de dados Samuel: " + e.getMessage());
+        }
+        return conecction;
+    }
+
 }
